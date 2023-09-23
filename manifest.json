@@ -3,7 +3,6 @@
   "name": "Temp Subreddit Blocker",
   "description": "Avoid spoilers or stay productive with this blocker",
   "version": "1.0",
-  "default_locale": "en",
   "action": {
     "default_title": "Temp Subreddit Blocker",
     "default_popup": "frontend/popup.html"
