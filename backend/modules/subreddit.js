@@ -1,7 +1,7 @@
 /**
  * Represents data of a saved subreddit including its name, date from which to filter, and whether it is selected
  */
-export class Subreddit {
+class Subreddit {
     constructor(subredditName) {
         this.name = subredditName;
         this.date = "dateString"; // datestring
@@ -20,3 +20,5 @@ export class Subreddit {
         return this.selected;
     }
 }
+
+export {Subreddit};

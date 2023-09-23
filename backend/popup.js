@@ -1,15 +1,17 @@
-import {Subreddit} from "./subreddit";
+import {Subreddit} from "./modules/subreddit.js";
 
 const subredditPrefix = "subreddit-"; // identifier for subreddit
 
 /**
  @description Sets up event handling
- **/
+ */
 const addListeners = () => {
-    let button = document.getElementById("addButton");
+    let addButton = document.getElementById("addButton");
 
-    button.addEventListener("click", () => {
-        addSubreddit();
+    document.addEventListener("DOMContentLoaded", () => {
+        addButton.addEventListener("click", () => {
+            addSubreddit();
+        });
     });
 }
 
@@ -56,6 +58,7 @@ const addCells = (id, numCells) => {
 
         element.append(textElement, dateElement);
         cell.appendChild(element);
+        console.log("i")
     }
 }
 
