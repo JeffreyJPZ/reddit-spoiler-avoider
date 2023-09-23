@@ -8,10 +8,12 @@
     "default_title": "Temp Subreddit Blocker",
     "default_popup": "popup.html"
   },
-  "content_scripts": {
-    "matches": ["https://*.reddit.com/*"],
-    "js": ["content.js"]
-  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.reddit.com/*"],
+      "js": ["content.js"]
+    }
+  ],
   "background": {
     "service_worker": "background.js"
   },
