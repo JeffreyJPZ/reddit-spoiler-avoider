@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Subreddit Time Filter</title>
+</head>
+<body>
+    <div class="title">
+        <h3>Subreddit Time Filter</h3>
+    </div>
+    <div class="subtitle">
+        <p>Avoid spoilers in your favourite subreddits with this tool! </p>
+    </div>
+    <div class="subtitle">
+        <p>Type a subreddit name and click "Add Subreddit" to add it to your saved subreddits.
+            Select the time period from which posts should be filtered for each desired subreddit
+            and click "Block Subreddits" to apply the filters.
+        </p>
+        <p>
+            e.g. If you want to block all posts within the last 3 hours, simply select today's date
+            and set the time to 3 hours before the current time.
+        </p>
+    </div>
+    <div class="table">
+        <table id="subreddits">
+            <thead>
+                <tr>
+                    <th>Subreddits</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <br><br>
+    <div class="input">
+        <label>
+            <input id="subredditInput" type="text" placeholder="e.g. formuladank">
+        </label>
+    </div>
+    <br>
+    <div class="button">
+        <button id="addButton" type="submit">Add Subreddit</button>
+    </div>
+    <br>
+    <div class="button">
+        <button id="blockButton" type="submit">Block Subreddits</button>
+    </div>
+
+    <script type="text/javascript" src="../backend/background.js"></script>
+    <script type="text/javascript" src="../backend/popup.js"></script>
+</body>
+</html>
