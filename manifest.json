@@ -14,7 +14,7 @@
     }
   ],
   "background": {
-    "service_worker": "backend/scripts/background.js"
+    "service_worker": "backend/background.js"
   },
   "permissions": ["scripting", "tabs"]
 }
