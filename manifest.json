@@ -6,16 +6,16 @@
   "default_locale": "en",
   "action": {
     "default_title": "Temp Subreddit Blocker",
-    "default_popup": "popup.html"
+    "default_popup": "frontend/popup.html"
   },
   "content_scripts": [
     {
       "matches": ["https://*.reddit.com/*"],
-      "js": ["content.js"]
+      "js": ["backend/content.js"]
     }
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "backend/background.js"
   },
   "permissions": ["scripting", "tabs", "runtime"]
 }
