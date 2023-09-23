@@ -10,11 +10,11 @@
   "content_scripts": [
     {
       "matches": ["https://*.reddit.com/*"],
-      "js": ["backend/content.js"]
+      "js": ["backend/scripts/content.js"]
     }
   ],
   "background": {
-    "service_worker": "backend/background.js"
+    "service_worker": "backend/scripts/background.js"
   },
   "permissions": ["scripting", "tabs"]
 }

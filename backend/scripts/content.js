@@ -10,7 +10,7 @@
  * @description Injects a script with the given path into the document
  */
 const injectScript = (type, path, dest) => {
-    let element = document.querySelector(dest);
+    let element = document.getElementById(dest);
     let script = document.createElement("script");
 
     script.setAttribute("src", path);
