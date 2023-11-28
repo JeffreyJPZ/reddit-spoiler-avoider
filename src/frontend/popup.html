@@ -13,11 +13,11 @@
     </div>
     <div class="subtitle">
         <p>Type a subreddit name and click "Add Subreddit" to add it to your saved subreddits.
-            Select the time period from which posts should be filtered for each desired subreddit
-            and click "Block Subreddits" to apply the filters.
+            Select the date and time from which posts should be filtered along with the filter category for each desired subreddit
+            and click "Filter Subreddits" to apply the filters.
         </p>
         <p>
-            e.g. If you want to block all posts within the last 3 hours, simply select today's date
+            e.g. If you want to block all posts within the last 3 hours, simply select today's date, select "after"
             and set the time to 3 hours before the current time.
         </p>
     </div>
@@ -26,6 +26,9 @@
             <thead>
                 <tr>
                     <th>Subreddits</th>
+                    <th>Filter Category</th>
+                    <th>Filter Date</th>
+                    <th>Select</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,10 +47,9 @@
     </div>
     <br>
     <div class="button">
-        <button id="blockButton" type="submit">Block Subreddits</button>
+        <button id="filterButton" type="submit">Filter Subreddits</button>
     </div>
 
-    <script type="module" src="../backend/popup.js"></script>
-    <script type="module" src="../backend/background.js"></script>
+<!--    <link rel="stylesheet" type="text/css" href="../frontend/popup.css" media="screen">-->
 </body>
 </html>

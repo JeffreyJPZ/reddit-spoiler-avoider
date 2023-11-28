@@ -19,4 +19,4 @@ const injectScript = (type, path, dest) => {
     element.appendChild(script);
 }
 
-injectScript()
+injectScript();

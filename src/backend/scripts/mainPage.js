@@ -1,3 +1,6 @@
+/**
+ * Content script for reddit main page
+ * */
 
 let menuContainer = "XEkFoehJNxIH9Wlr5Ilzd _2MgAHlPDdKvXiG-Qbz5cbC ";
 let searchedContainer = "";
