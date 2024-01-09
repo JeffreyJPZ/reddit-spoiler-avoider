@@ -1,0 +1,20 @@
+table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+td {
+    text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#subreddits {
+
+}

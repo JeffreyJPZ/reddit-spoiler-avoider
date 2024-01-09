@@ -9,7 +9,7 @@
  */
 const addListeners = () => {
     chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
-            handleMessage(message).then(sendResponse); // no failure function
+            handleMessage(message).then(sendResponse);
             return true;
     });
 }
@@ -27,9 +27,23 @@ const handleMessage = async (message) => {
         }
 
         let [tab] = await chrome.tabs.query(tabParams);
-        // TODO: handle response in content script
-        let response = await chrome.tabs.sendMessage(tab.id, message.data); // json object from data field
 
-        return response;
+        return chrome.scripting.executeScript({
+            target: {tabId: tab.id},
+            files: ['./mainPage.js'], // TODO: may need to update this for dist
+            func: mainPage(tab, message)
+        });
     }
 }
+
+const mainPage = (tab, message) => {
+    return chrome.scripting.executeScript({
+        target: {tabId: tab.id},
+        args: [message.data],
+        func: (...args) => {
+            parseData(...args);
+        }
+    });
+}
+
+addListeners();

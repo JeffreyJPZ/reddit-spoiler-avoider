@@ -12,44 +12,33 @@
         <p>Avoid spoilers in your favourite subreddits with this tool! </p>
     </div>
     <div class="subtitle">
-        <p>Type a subreddit name and click "Add Subreddit" to add it to your saved subreddits.
-            Select the date and time from which posts should be filtered along with the filter category for each desired subreddit
-            and click "Filter Subreddits" to apply the filters.
+        <p>Head over to the options page, type a subreddit name and click "Add Subreddit" to add it to your saved subreddits.
+            Select the date and time from which posts should be filtered along with the filter category for each desired subreddit(s),
+            set the desired subreddit(s) as active,
+            then return to the popup and click "Refresh Filters" to apply the filters.
         </p>
         <p>
             e.g. If you want to block all posts within the last 3 hours, simply select today's date, select "after"
             and set the time to 3 hours before the current time.
         </p>
+        <p>
+            Note: in order for this extension to work, the URL of the current tab must have reddit.com in it.
+        </p>
     </div>
-    <div class="table">
-        <table id="subreddits">
-            <thead>
-                <tr>
-                    <th>Subreddits</th>
-                    <th>Filter Category</th>
-                    <th>Filter Date</th>
-                    <th>Select</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    <br><br>
-    <div class="input">
-        <label>
-            <input id="subredditInput" type="text" placeholder="e.g. formuladank">
-        </label>
+    <div class="statistics">
+        <h4>Subreddits Filtered</h4>
+        <p id="subredditFilterCount">0</p>
+        <h4>Posts Filtered</h4>
+        <p id="postsFilterCount">0</p>
     </div>
     <br>
     <div class="button">
-        <button id="addButton" type="submit">Add Subreddit</button>
+        <button id="filterButton" type="submit">Refresh Filters</button>
     </div>
     <br>
     <div class="button">
-        <button id="filterButton" type="submit">Filter Subreddits</button>
+        <button id="optionsButton" type="submit">Filter Options</button>
     </div>
-
-<!--    <link rel="stylesheet" type="text/css" href="../frontend/popup.css" media="screen">-->
+    <br>
 </body>
 </html>
