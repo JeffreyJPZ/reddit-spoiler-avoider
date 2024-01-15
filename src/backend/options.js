@@ -8,9 +8,9 @@ import '../frontend/options.css';
  @description Sets up event handling
  */
 const addListeners = () => {
-    let addButton = document.getElementById("addButton");
-    let deleteButton = document.getElementById("deleteButton");
-    let updateButton = document.getElementById("updateButton");
+    const addButton = document.getElementById("addButton");
+    const deleteButton = document.getElementById("deleteButton");
+    const updateButton = document.getElementById("updateButton");
 
     document.addEventListener("DOMContentLoaded", () => {
         addButton.addEventListener("click", async () => {
@@ -48,32 +48,32 @@ const addListeners = () => {
  * @description Parses the inputted subreddit and adds a subreddit to the table
  */
 const addSubreddit = async () => {
-    let name = document.getElementById("subredditInput").value;
+    const name = document.getElementById("subredditInput").value;
 
-    await addSubredditToStorage(name);
+    await addSubredditFromInput(name);
 
 }
 
 /**
  * @param name The name of the subreddit
  * @description If a subreddit with the given name already exists, throws an error,
- *              otherwise adds a subreddit to storage with the given name
+ *              otherwise adds a subreddit to storage with the given name and updates the table
  */
-const addSubredditToStorage = async (name) => {
+const addSubredditFromInput = async (name) => {
 
     await chrome.storage.local.get(name, async (result) => {
 
         if (!(name in result)) {
 
-            let subreddit = {};
-            subreddit[name] = {
+            const subredditObj = {};
+            subredditObj[name] = {
                 filterCategory: "before",
                 filterDateTime: parseUTCDate(new Date()),
                 isActive: "false"
             };
 
             // adds subreddit
-            await chrome.storage.local.set(subreddit);
+            await chrome.storage.local.set(subredditObj);
 
             console.log("Subreddit " + name + " added"); // debugging purposes
 
@@ -112,16 +112,18 @@ const addSubredditToTable = (name, filterCategory, filterDateTime, isActive, isS
  * @description Adds the inputted subreddit name to the table
  */
 const addName = (row, name) => {
-    let cell = addCell(row);
+    const cell = addCell(row);
 
-    let namePrefix = "-name";
+    const namePrefix = "-name";
 
     // Creates an element with the name of the subreddit
-    let element = document.createElement("DIV");
+    const element = document.createElement("input");
+    element.setAttribute("type", "text");
     element.setAttribute("class", "subreddit" + namePrefix);
-    element.setAttribute("contentEditable", "true");
+    element.setAttribute("value", name); // original name to check against when updating subreddits
 
-    element.appendChild(document.createTextNode(name));
+    element.required = true;
+    element.value = name;
 
     cell.appendChild(element);
 }
@@ -132,21 +134,21 @@ const addName = (row, name) => {
  * @description Adds the filter categories to the table
  */
 const addFilterCategory = (row, filterCategory) => {
-    let cell = addCell(row);
+    const cell = addCell(row);
 
-    let categoriesPrefix = "-filter-categories";
-    let categories = ["before", "after"];
+    const categoriesPrefix = "-filter-categories";
+    const categories = ["before", "after"];
 
     // Creates an element with the filter categories
-    let element = document.createElement("SELECT");
+    const element = document.createElement("select");
     element.setAttribute("class", "subreddit" + categoriesPrefix);
 
     // Populates element with filter categories
     for (let category of categories) {
-        let option = document.createElement("OPTION");
-        option.setAttribute("class", "subreddit" + categoriesPrefix + category);
-        option.setAttribute("value", category);
+        let option = document.createElement("option");
+
         option.innerHTML = category;
+        option.value = category;
 
         element.appendChild(option);
     }
@@ -166,15 +168,16 @@ const addFilterCategory = (row, filterCategory) => {
  * @description Adds a date to the table
  */
 const addFilterDateTime = (row, filterDateTime) => {
-    let cell = addCell(row);
+    const cell = addCell(row);
 
-    let datePrefix = "-datetime-local";
+    const datePrefix = "-datetime-local";
 
     // Creates a date element
-    let element = document.createElement("INPUT");
+    const element = document.createElement("input");
     element.setAttribute("type", "datetime-local");
     element.setAttribute("class", "subreddit" + datePrefix);
-    element.setAttribute("contentEditable", "true");
+
+    element.required = true;
 
     if (filterDateTime !== null) {
         element.value = parseLocalDate(filterDateTime);
@@ -193,19 +196,19 @@ const addFilterDateTime = (row, filterDateTime) => {
  * @description Adds a box indicating whether the filter is active to the table
  */
 const addSetActiveBox = (row, isActive) => {
-    let cell = addCell(row);
+    const cell = addCell(row);
 
-    let boxPrefix = "-activebox";
+    const boxPrefix = "-activebox";
 
     // Creates a box element
-    let element = document.createElement("INPUT");
+    const element = document.createElement("input");
     element.setAttribute("type", "checkbox");
     element.setAttribute("class", "subreddit" + boxPrefix);
 
     if (isActive !== null) {
-        element.value = isActive;
+        element.checked = isActive;
     } else {
-        element.value = false;
+        element.checked = false;
     }
 
     cell.appendChild(element);
@@ -217,19 +220,19 @@ const addSetActiveBox = (row, isActive) => {
  * @description Adds a box indicating whether the filter is currently selected to the table
  */
 const addSelectedBox = (row, isSelected) => {
-    let cell = addCell(row);
+    const cell = addCell(row);
 
-    let boxPrefix = "-selectedbox";
+    const boxPrefix = "-selectedbox";
 
     // Creates a box element
-    let element = document.createElement("INPUT");
+    const element = document.createElement("input");
     element.setAttribute("type", "checkbox");
     element.setAttribute("class", "subreddit" + boxPrefix);
 
     if (isSelected !== null) {
-        element.value = isSelected
+        element.checked = isSelected
     } else {
-        element.value = false;
+        element.checked = false;
     }
 
     cell.appendChild(element);
@@ -249,9 +252,9 @@ const addCell = (row) => {
 const deleteSubreddits = async () => {
 
     // iterate through table and get all selected subreddits as a map, deleting rows
-    let subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
-    let selectedSubreddits = [];
-    let selectedColumn = 4; // column index for the selected boxes
+    const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
+    const selectedSubreddits = [];
+    const selectedColumn = 4; // column index for the selected boxes
 
     let i = 0;
 
@@ -260,7 +263,7 @@ const deleteSubreddits = async () => {
         let subreddit = subreddits.rows[i];
 
         if (subreddit.children[selectedColumn].getElementsByTagName("input")[0].checked) {
-            let name = subreddit.children[0].getElementsByTagName("DIV")[0].innerHTML;
+            let name = subreddit.children[0].getElementsByTagName("input")[0].value;
             selectedSubreddits.push(name);
             subreddits.deleteRow(i);
         } else {
@@ -272,17 +275,86 @@ const deleteSubreddits = async () => {
 }
 
 /**
- * @description Updates subreddit table if no names are duplicated and all fields are valid
+ * @description Updates subreddit table if no names are duplicated
  *              otherwise resets options to the currently stored options
  */
 const updateSubreddits = async () => {
-    // stub
+    const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
+
+    const checkedSubreddits = {};
+    const nameColumn = 0; // column index for subreddit name
+    let shouldUpdate = true;
+
+    for (let i = 0; i < subreddits.rows.length; i++) {
+        let subreddit = subreddits.rows[i];
+        let name = subreddit.children[nameColumn].getElementsByTagName("input")[0].value;
+
+        // check for duplication in table
+        if (name in checkedSubreddits) {
+            shouldUpdate = false;
+            break;
+        } else {
+            checkedSubreddits[name] = true;
+        }
+    }
+
+    if (shouldUpdate) {
+        await updateSubredditsFromInput();
+    } else {
+        console.log("Duplicate name inputted"); // debugging
+        await loadSubreddits();
+    }
 }
 
 /**
- * @description Retrieves subreddits from storage and displays them in table
+ * @description Updates storage with the subreddit table information
+ */
+const updateSubredditsFromInput = async () => {
+    const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
+    const nameColumn = 0; // column index for subreddit name
+    const filterCategoryColumn = 1; // column index for filter category
+    const filterDateTimeColumn = 2; // column index for datetime
+    const isActiveColumn = 3; // column index for activebox
+
+    for (let i = 0; i < subreddits.rows.length; i++) {
+        let subreddit = subreddits.rows[i];
+
+        // gets original name and new name
+        let oldName = subreddit.children[nameColumn].getElementsByTagName("input")[0].getAttribute("value");
+        let newName = subreddit.children[nameColumn].getElementsByTagName("input")[0].value;
+
+        let filterCategory = subreddit.children[filterCategoryColumn].getElementsByTagName("select")[0].value;
+        let filterDateTime = subreddit.children[filterDateTimeColumn].getElementsByTagName("input")[0].value;
+        let isActive = subreddit.children[isActiveColumn].getElementsByTagName("input")[0].checked;
+
+        await chrome.storage.local.remove(oldName);
+
+        const subredditObj = {};
+        subredditObj[newName] = {
+            filterCategory: filterCategory,
+            filterDateTime: parseUTCDate(filterDateTime),
+            isActive: isActive
+        };
+
+        await chrome.storage.local.set(subredditObj)
+
+        // updates value attribute of subreddit to reflect updated name
+        subreddit.children[nameColumn].getElementsByTagName("input")[0].setAttribute("value", newName);
+    }
+
+}
+
+/**
+ * @description Retrieves subreddits from storage, clears table and displays them in table
  */
 const loadSubreddits = async () => {
+    const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
+    let i = 0;
+
+    while (i < subreddits.rows.length) {
+        subreddits.deleteRow(i);
+        i++;
+    }
 
     await chrome.storage.local.get(null, (result) => {
 
@@ -313,8 +385,8 @@ const parseUTCDate = (localDate) => {
 const parseLocalDate = (utcDate) => {
     // uses sweden's similarity to iso, but is a bit inefficient
 
-    let offsetMinutes = new Date().getTimezoneOffset();
-    let date = new Date(utcDate);
+    const offsetMinutes = new Date().getTimezoneOffset();
+    const date = new Date(utcDate);
     date.setMinutes(date.getMinutes() - offsetMinutes)
 
     return date.toLocaleString('sv').slice(0, -3);
