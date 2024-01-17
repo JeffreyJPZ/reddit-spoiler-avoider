@@ -275,7 +275,7 @@ const deleteSubreddits = async () => {
 }
 
 /**
- * @description Updates subreddit table if no names are duplicated
+ * @description Updates subreddit table if no names are duplicated or empty, and if no datetimes are empty
  *              otherwise resets options to the currently stored options
  */
 const updateSubreddits = async () => {
@@ -283,14 +283,16 @@ const updateSubreddits = async () => {
 
     const checkedSubreddits = {};
     const nameColumn = 0; // column index for subreddit name
+    const filterDateTimeColumn = 2; // column index for datetime
     let shouldUpdate = true;
 
     for (let i = 0; i < subreddits.rows.length; i++) {
         let subreddit = subreddits.rows[i];
         let name = subreddit.children[nameColumn].getElementsByTagName("input")[0].value;
+        let filterDateTime = subreddit.children[filterDateTimeColumn].getElementsByTagName("input")[0].value;
 
         // check for duplication in table
-        if (name in checkedSubreddits) {
+        if (checkedSubreddits[name] || name === "" || filterDateTime === "") {
             shouldUpdate = false;
             break;
         } else {
@@ -302,7 +304,7 @@ const updateSubreddits = async () => {
         await updateSubredditsFromInput();
     } else {
         console.log("Duplicate name inputted"); // debugging
-        await loadSubreddits();
+        // await loadSubreddits();
     }
 }
 
