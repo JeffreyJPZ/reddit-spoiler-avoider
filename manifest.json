@@ -13,7 +13,7 @@
   "content_scripts": [
     {
       "matches": ["https://old.reddit.com/*", "https://www.reddit.com/*"],
-      "js": ["./mainPage.js"]
+      "js": ["./content.js"]
     }
   ],
   "options_page": "./options.html",
