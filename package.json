@@ -5,8 +5,8 @@
   "devDependencies": {
     "css-loader": "^6.8.1",
     "jest": "^29.7.0",
-    "jest-puppeteer": "^9.0.1",
-    "puppeteer": "^21.5.2",
+    "jest-puppeteer": "^9.0.2",
+    "puppeteer": "^21.7.0",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
     "webpack-extension-manifest-plugin": "^0.8.0"

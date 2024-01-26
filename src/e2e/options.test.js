@@ -1,14 +1,20 @@
 /**
- * Tests for options
+ * Tests for options page
  */
+
+// need to fix ReferenceError in tests
+const TIMEOUT = 0;
 
 /**
  * Setup for tests
  */
+
 beforeAll(async () => {
+
     const optionsURL = 'http://localhost:63342/subreddit-time-filter/dist/options.html';
-    await page.goto(optionsURL, {waitUntil: 'domcontentloaded'});
-})
+    await page.goto(optionsURL, {waitUntil: 'domcontentloaded', timeout: TIMEOUT});
+
+});
 
 /**
  * Tests initial state
@@ -16,22 +22,15 @@ beforeAll(async () => {
 describe("Test initial state", () => {
 
     test("Check that table is empty", async () => {
-        let tableLength = await page.evaluate(() => {
+        const tableLength = await page.evaluate(() => {
 
             // return number of subreddits
-            let table = document.getElementById("subreddits")
+            const table = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
             return table.rows.length;
         });
 
         expect(tableLength).toBe(0);
-    });
-
-    /**
-     * Reloads page after each test
-     */
-    afterEach(async () => {
-        await page.reload({waitUntil: "domcontentloaded"});
     });
 })
 
@@ -45,16 +44,17 @@ describe("Test subreddit filter addition", () => {
      */
     test("Check that filter is correctly added upon button press", async () => {
 
-        let subredditCount = await page.evaluate(() => {
+        const subredditCount = await page.evaluate(() => {
+            window.chrome = chrome;
 
             // mock inputting and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "formula1";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             return subreddits.rows.length;
@@ -66,20 +66,20 @@ describe("Test subreddit filter addition", () => {
 
     test("Check that filter name is correct", async () => {
 
-        let name = await page.evaluate(() => {
+        const name = await page.evaluate(() => {
 
             // mock inputting and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "formula1";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // gets name of subreddit
-            return subreddits.rows[0].children[0].getElementsByTagName("DIV")[0].innerHTML;
+            return subreddits.rows[0].children[0].getElementsByTagName("input")[0].value;
         });
 
         expect(name).toBe("formula1");
@@ -87,16 +87,16 @@ describe("Test subreddit filter addition", () => {
 
     test("Check that filter categories exist", async () => {
 
-        let categoryExists = await page.evaluate(() => {
+        const categoryExists = await page.evaluate(() => {
 
             // mock inputting and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "formula1";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // checks whether filter category exists
@@ -108,16 +108,16 @@ describe("Test subreddit filter addition", () => {
 
     test("Check that filter date exists", async () => {
 
-        let datetimeExists = await page.evaluate(() => {
+        const datetimeExists = await page.evaluate(() => {
 
             // mock inputting and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "formula1";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // checks whether datetime exists
@@ -129,16 +129,16 @@ describe("Test subreddit filter addition", () => {
 
     test("Check that filter is inactive", async () => {
 
-        let isActive = await page.evaluate(() => {
+        const isActive = await page.evaluate(() => {
 
             // mock inputting and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "formula1";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // checks whether subreddit is active
@@ -150,16 +150,16 @@ describe("Test subreddit filter addition", () => {
 
     test("Check that filter is unselected", async () => {
 
-        let isSelected = await page.evaluate(() => {
+        const isSelected = await page.evaluate(() => {
 
             // mock inputting and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "formula1";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // checks whether subreddit is selected
@@ -174,18 +174,18 @@ describe("Test subreddit filter addition", () => {
      */
     test("Check that filters are correctly added upon button press", async () => {
 
-        let subredditCount = await page.evaluate(() => {
+        const subredditCount = await page.evaluate(() => {
 
             // mock input and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "pics";
             addButton.click();
             subredditInput.value = "tennis";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             return subreddits.rows.length;
@@ -196,23 +196,23 @@ describe("Test subreddit filter addition", () => {
 
     test("Check that filter names are correct", async () => {
 
-        let names = await page.evaluate(() => {
+        const names = await page.evaluate(() => {
 
             // mock input and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "pics";
             addButton.click();
             subredditInput.value = "tennis";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // gets name of subreddits
-            return {subreddit1: subreddits.rows[0].children[0].getElementsByTagName("DIV")[0].innerHTML,
-                    subreddit2: subreddits.rows[1].children[0].getElementsByTagName("DIV")[0].innerHTML};
+            return {subreddit1: subreddits.rows[0].children[0].getElementsByTagName("input")[0].value,
+                    subreddit2: subreddits.rows[1].children[0].getElementsByTagName("input")[0].value};
         });
 
         expect(names.subreddit1).toBe("pics");
@@ -221,18 +221,18 @@ describe("Test subreddit filter addition", () => {
 
     test("Check that filter categories exist", async () => {
 
-        let categoryExists = await page.evaluate(() => {
+        const categoryExists = await page.evaluate(() => {
 
             // mock input and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "pics";
             addButton.click();
             subredditInput.value = "tennis";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // checks whether filter category exists
@@ -246,18 +246,18 @@ describe("Test subreddit filter addition", () => {
 
     test("Check that filter dates exist", async () => {
 
-        let datetimeExists = await page.evaluate(() => {
+        const datetimeExists = await page.evaluate(() => {
 
             // mock input and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "pics";
             addButton.click();
             subredditInput.value = "tennis";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // checks whether datetime exists
@@ -271,18 +271,18 @@ describe("Test subreddit filter addition", () => {
 
     test("Check that filters are inactive", async () => {
 
-        let isActive = await page.evaluate(() => {
+        const isActive = await page.evaluate(() => {
 
             // mock input and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "pics";
             addButton.click();
             subredditInput.value = "tennis";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // checks whether subreddit is active
@@ -296,18 +296,18 @@ describe("Test subreddit filter addition", () => {
     });
 
     test("Check that filters are unselected", async () => {
-        let isSelected = await page.evaluate(() => {
+        const isSelected = await page.evaluate(() => {
 
             // mock input and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "pics";
             addButton.click();
             subredditInput.value = "tennis";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             // checks whether subreddit is active
@@ -325,18 +325,18 @@ describe("Test subreddit filter addition", () => {
      */
     test("Check that second subreddit is not added", async () => {
 
-        let subredditCount = await page.evaluate(() => {
+        const subredditCount = await page.evaluate(() => {
 
             // mock input and adding an element
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "nba";
             addButton.click();
             subredditInput.value = "nba";
             addButton.click();
 
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
 
             return subreddits.rows.length;
@@ -344,10 +344,6 @@ describe("Test subreddit filter addition", () => {
 
         expect(subredditCount).toBe(1);
 
-    });
-
-    afterEach(async () => {
-        await page.reload({waitUntil: "domcontentloaded"});
     });
 
 });
@@ -360,8 +356,8 @@ describe("Test subreddit filter deletion", () => {
 
         await page.evaluate(() => {
 
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "ask";
             addButton.click();
@@ -378,15 +374,15 @@ describe("Test subreddit filter deletion", () => {
      */
     test("Check that filter is correctly deleted", async () => {
 
-        let subredditCount = await page.evaluate(() => {
+        const subredditCount = await page.evaluate(() => {
 
             // mock selecting an element
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
             subreddits.rows[1].children[4].getElementsByTagName("input")[0].checked = true;
 
             // mock deleting an element
-            let deleteButton = document.getElementById("deleteButton");
+            const deleteButton = document.getElementById("deleteButton");
 
             deleteButton.click();
 
@@ -401,16 +397,16 @@ describe("Test subreddit filter deletion", () => {
      */
     test("Check that filters are correctly deleted", async () => {
 
-        let subredditCount = await page.evaluate(() => {
+        const subredditCount = await page.evaluate(() => {
 
             // mock selecting elements
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
             subreddits.rows[0].children[4].getElementsByTagName("input")[0].checked = true;
             subreddits.rows[1].children[4].getElementsByTagName("input")[0].checked = true;
 
             // mock deleting elements
-            let deleteButton = document.getElementById("deleteButton");
+            const deleteButton = document.getElementById("deleteButton");
 
             deleteButton.click();
 
@@ -438,8 +434,8 @@ describe("Test changing subreddit filter options", () => {
 
         await page.evaluate(() => {
 
-            let subredditInput = document.getElementById("subredditInput");
-            let addButton = document.getElementById("addButton");
+            const subredditInput = document.getElementById("subredditInput");
+            const addButton = document.getElementById("addButton");
 
             subredditInput.value = "news";
             addButton.click();
@@ -455,28 +451,24 @@ describe("Test changing subreddit filter options", () => {
     test("Check that names are unchanged", async () => {
 
         // when iterating through table the first time, keep map of names already evaluated
-        let names = await page.evaluate(() => {
+        const names = await page.evaluate(() => {
 
             // mock changing subreddit name
-            let subreddits = document.getElementById("subreddits")
+            const subreddits = document.getElementById("subreddits")
                 .getElementsByTagName("tbody")[0];
-            let applyChangesButton = document.getElementById("applyChangesButton");
+            const updateButton = document.getElementById("updateButton");
 
-            subreddits.rows[1].children[0].getElementsByTagName("DIV")[0].innerHTML = "news";
-            applyChangesButton.click();
+            subreddits.rows[1].children[0].getElementsByTagName("input")[0].value = "news";
+            updateButton.click();
 
             // gets name of subreddits
-            return {subreddit1: subreddits.rows[0].children[0].getElementsByTagName("DIV")[0].innerHTML,
-                subreddit2: subreddits.rows[1].children[0].getElementsByTagName("DIV")[0].innerHTML};
+            return {subreddit1: subreddits.rows[0].children[0].getElementsByTagName("input")[0].value,
+                subreddit2: subreddits.rows[1].children[0].getElementsByTagName("input")[0].value};
         });
 
         expect(names.subreddit1).toBe("news");
         expect(names.subreddit2).toBe("AskReddit");
 
-    });
-
-    afterEach(async () => {
-        await page.reload({waitUntil: "domcontentloaded"});
     });
 
 });

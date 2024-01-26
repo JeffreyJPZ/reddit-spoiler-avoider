@@ -61,16 +61,18 @@ const addSubreddit = async () => {
  */
 const addSubredditFromInput = async (name) => {
 
-    await chrome.storage.local.get(name, async (result) => {
+    chrome.storage.local.get(name, async (result) => {
 
         if (!(name in result)) {
 
             const subredditObj = {};
-            subredditObj[name] = {
-                filterCategory: "before",
-                filterDateTime: parseUTCDate(new Date()),
-                isActive: "false"
-            };
+            const subredditOptions = {};
+
+            subredditOptions['filterCategory'] = "before";
+            subredditOptions['filterDateTime'] = parseUTCDate(new Date());
+            subredditOptions['isActive'] = false;
+
+            subredditObj[name] = subredditOptions;
 
             // adds subreddit
             await chrome.storage.local.set(subredditObj);
@@ -349,7 +351,7 @@ const updateSubredditsFromInput = async () => {
 /**
  * @description Retrieves subreddits from storage, clears table and displays them in table
  */
-const loadSubreddits = async () => {
+const loadSubreddits = () => {
     const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
     let i = 0;
 
@@ -358,7 +360,7 @@ const loadSubreddits = async () => {
         i++;
     }
 
-    await chrome.storage.local.get(null, (result) => {
+    chrome.storage.local.get(null, (result) => {
 
         for (let key in result) {
 
@@ -394,5 +396,5 @@ const parseLocalDate = (utcDate) => {
     return date.toLocaleString('sv').slice(0, -3);
 }
 
-await loadSubreddits();
+loadSubreddits();
 addListeners();

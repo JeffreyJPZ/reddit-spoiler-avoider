@@ -1,49 +1,49 @@
 /**
  * Handles browser events e.g. user clicking on tab or scrolling and sends message to appropriate script
- * e.g. user clicks, background fires, gets popup data and sends to content script,
- * displays count of subreddits that have active filters, stores saved subreddits to storage api
+ * e.g. user clicks, background fires, gets popup data and sends to content script
  */
 
-/**
- * @description Sets up event handling
- */
-const addListeners = () => {
-    chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
-            handleMessage(message).then(sendResponse);
-            return true;
-    });
-}
+// Listens for messages from popup or content script
+chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
+    const parsedMessage = JSON.parse(message);
+    if (parsedMessage.key === 'refreshFilters') {
+        filterSubreddits().then(sendResponse(''));
 
-/**
- * @description Handles message sending to content scripts
- * @param message The data to be passed
- * @return response The response message from the content scripts
- */
-const handleMessage = async (message) => {
-    if (message.key === "filter") { // passes data to content script
-        let tabParams = {
-            active: true,
-            currentWindow: true
-        }
-
-        let [tab] = await chrome.tabs.query(tabParams);
-
-        return chrome.scripting.executeScript({
-            target: {tabId: tab.id},
-            files: ['./mainPage.js'], // TODO: may need to update this for dist
-            func: mainPage(tab, message)
-        });
     }
-}
 
-const mainPage = (tab, message) => {
-    return chrome.scripting.executeScript({
-        target: {tabId: tab.id},
-        args: [message.data],
-        func: (...args) => {
-            parseData(...args);
+    return true;
+});
+
+/**
+ * @description Retrieves only the active subreddits from storage and passes the subreddits to the content script
+ */
+const filterSubreddits = async () => {
+    chrome.storage.local.get(null, async (subreddits) => {
+
+        const activeSubreddits = {}
+        for (let name in subreddits) {
+            if (subreddits[name].isActive) {
+                activeSubreddits[name] = subreddits[name];
+            }
         }
+
+        await sendMessage('filter', activeSubreddits);
     });
 }
 
-addListeners();
+/**
+ * @param key The message key
+ * @param subreddits The active subreddits to be passed in the message
+ * @description Sends a message to the content script in the currently active tab
+ */
+const sendMessage = async (key, subreddits) => {
+    const tabParams = {
+        active: true,
+        currentWindow: true
+    }
+
+    const [tab] = await chrome.tabs.query(tabParams);
+
+    await chrome.tabs.sendMessage(tab.id, JSON.stringify({key: key, data: subreddits}));
+}
+

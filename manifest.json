@@ -7,9 +7,12 @@
     "default_title": "Temp Subreddit Blocker",
     "default_popup": "./popup.html"
   },
+  "host_permissions": [
+    "https://*/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["https://*.reddit.com/*"],
+      "matches": ["https://old.reddit.com/*"],
       "js": ["./mainPage.js"]
     }
   ],
