@@ -49,9 +49,7 @@ const addListeners = () => {
  */
 const addSubreddit = async () => {
     const name = document.getElementById("subredditInput").value;
-
     await addSubredditFromInput(name);
-
 }
 
 /**
@@ -65,19 +63,16 @@ const addSubredditFromInput = async (name) => {
 
         if (!(name in result)) {
 
-            const subredditObj = {};
             const subredditOptions = {};
 
-            subredditOptions['filterCategory'] = "before";
-            subredditOptions['filterDateTime'] = parseUTCDate(new Date());
-            subredditOptions['isActive'] = false;
-
-            subredditObj[name] = subredditOptions;
+            subredditOptions[name] = {
+                filterCategory: "before",
+                filterDateTime: parseUTCDate(new Date()),
+                isActive: false
+            };
 
             // adds subreddit
-            await chrome.storage.local.set(subredditObj);
-
-            console.log("Subreddit " + name + " added"); // debugging purposes
+            await chrome.storage.local.set(subredditOptions);
 
             addSubredditToTable(name, null, null, null, null);
 
@@ -122,7 +117,7 @@ const addName = (row, name) => {
     const element = document.createElement("input");
     element.setAttribute("type", "text");
     element.setAttribute("class", "subreddit" + namePrefix);
-    element.setAttribute("value", name); // original name to check against when updating subreddits
+    element.setAttribute("value", name);
 
     element.required = true;
     element.value = name;
@@ -187,7 +182,6 @@ const addFilterDateTime = (row, filterDateTime) => {
         // sets default value as local time
         element.value = new Date().toLocaleString('sv').slice(0, -3);
     }
-
 
     cell.appendChild(element);
 }
@@ -305,8 +299,7 @@ const updateSubreddits = async () => {
     if (shouldUpdate) {
         await updateSubredditsFromInput();
     } else {
-        console.log("Duplicate name inputted"); // debugging
-        // await loadSubreddits();
+        console.log("Duplicate or invalid field inputted");
     }
 }
 
@@ -323,7 +316,7 @@ const updateSubredditsFromInput = async () => {
     for (let i = 0; i < subreddits.rows.length; i++) {
         let subreddit = subreddits.rows[i];
 
-        // gets original name and new name
+        // gets name stored in attribute and dynamically updated name
         let oldName = subreddit.children[nameColumn].getElementsByTagName("input")[0].getAttribute("value");
         let newName = subreddit.children[nameColumn].getElementsByTagName("input")[0].value;
 
@@ -331,16 +324,19 @@ const updateSubredditsFromInput = async () => {
         let filterDateTime = subreddit.children[filterDateTimeColumn].getElementsByTagName("input")[0].value;
         let isActive = subreddit.children[isActiveColumn].getElementsByTagName("input")[0].checked;
 
-        await chrome.storage.local.remove(oldName);
+        if (oldName !== newName) {
+            // removes old item only if name has been changed
+            await chrome.storage.local.remove(oldName);
+        }
 
-        const subredditObj = {};
-        subredditObj[newName] = {
+        const subredditOptions = {};
+        subredditOptions[newName] = {
             filterCategory: filterCategory,
             filterDateTime: parseUTCDate(filterDateTime),
             isActive: isActive
         };
 
-        await chrome.storage.local.set(subredditObj)
+        await chrome.storage.local.set(subredditOptions);
 
         // updates value attribute of subreddit to reflect updated name
         subreddit.children[nameColumn].getElementsByTagName("input")[0].setAttribute("value", newName);
@@ -351,7 +347,7 @@ const updateSubredditsFromInput = async () => {
 /**
  * @description Retrieves subreddits from storage, clears table and displays them in table
  */
-const loadSubreddits = () => {
+const loadSubreddits = async () => {
     const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
     let i = 0;
 
@@ -396,5 +392,6 @@ const parseLocalDate = (utcDate) => {
     return date.toLocaleString('sv').slice(0, -3);
 }
 
-loadSubreddits();
+await loadSubreddits();
 addListeners();
+
