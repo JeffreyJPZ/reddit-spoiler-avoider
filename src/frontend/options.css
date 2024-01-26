@@ -3,19 +3,27 @@ html {
 }
 
 .title {
-    font-size: large;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    font-size: xx-large;
     color: #FF5700;
     margin: 10px;
 }
 
 .subtitle {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    font-size: small;
     color: snow;
     margin: 10px;
 }
 
 table {
+    margin-right: auto;
+    margin-left: auto;
     background-color: #3d3d3d;
-    margin: 10px;
     border: 2px solid black;
     border-collapse: collapse;
 }
@@ -38,16 +46,26 @@ input {
     background-color: #aaaaaa;
 }
 
-select {
-    background-color: #aaaaaa;
+.input {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    margin: 10px;
 }
 
-.input {
-    margin: 10px;
+select {
+    background-color: #aaaaaa;
 }
 
 button {
     background-color: #FF5700;
     color: snow;
-    margin: 10px;
+
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    margin: 20px;
 }
