@@ -1,0 +1,25 @@
+{
+  "name": "subreddit-time-filter-package",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "css-loader": "^6.8.1",
+    "jest": "^29.7.0",
+    "jest-puppeteer": "^9.0.2",
+    "puppeteer": "^21.7.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-extension-manifest-plugin": "^0.8.0"
+  },
+  "scripts": {
+    "test": "jest --config=./src/e2e/jest.config.js --forceExit --detectOpenHandles",
+    "build": "webpack --mode production",
+    "build-prod": "webpack --mode development"
+  },
+  "dependencies": {
+    "@types/chrome": "latest",
+    "html-webpack-plugin": "^5.5.3",
+    "lodash": "^4.17.21",
+    "mini-css-extract-plugin": "^2.7.6"
+  }
+}

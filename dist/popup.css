@@ -1,0 +1,33 @@
+html {
+    background-color: #212121;
+    min-width: 400px;
+    min-height: 400px;
+    margin: 10px;
+}
+
+.subtitle {
+    color: snow;
+    justify-content: center;
+    justify-items: center;
+}
+
+.title {
+    color: #FF5700;
+    font-size: medium;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    margin: 20px;
+}
+
+button {
+    background-color: #FF5700;
+    color: snow;
+    outline-width: 0;
+}
