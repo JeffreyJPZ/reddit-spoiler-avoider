@@ -12,7 +12,7 @@
   ],
   "content_scripts": [
     {
-      "matches": ["https://old.reddit.com/*"],
+      "matches": ["https://old.reddit.com/*", "https://www.reddit.com/*"],
       "js": ["./mainPage.js"]
     }
   ],
