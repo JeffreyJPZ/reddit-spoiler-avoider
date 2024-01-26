@@ -22,7 +22,7 @@ document.addEventListener("scroll", async () => {
     }
 });
 
-// Runs script when user scrolls
+// Runs script when user refreshes or navigates to next page
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         await filterPosts();
@@ -103,12 +103,8 @@ const isPostNameValid = (postSubredditName, subredditFilterOptions) => {
 
 /**
  * @param subreddits The active subreddit filter options
- * @description If filter options already exists, removes the existing options,
- *              otherwise saves the given subreddit filter options to storage
+ * @description Saves the given subreddit filter options to storage
  */
 const setSubreddits = (subreddits) => {
-    if (window.localStorage.getItem('subredditFilterOptions') !== null) {
-        window.localStorage.removeItem('subredditFilterOptions');
-    }
     window.localStorage.setItem('subredditFilterOptions', JSON.stringify(subreddits));
 }

@@ -15,7 +15,7 @@ module.exports = {
         popup: './src/backend/popup.js',
         options: './src/backend/options.js',
         background: './src/backend/background.js',
-        mainPage: './src/backend/scripts/content.js'
+        content: './src/backend/scripts/content.js'
     },
     plugins: [
         new htmlWebpackPlugin({
