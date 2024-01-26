@@ -1,6 +1,7 @@
-# subreddit-time-filter
+# Subreddit Time Filter
+
 A tool for blocking all content from specified subreddits within the specified time range in your feed to avoid spoilers
 or to increase productivity.
 
-Attribution:
-https://www.freecodecamp.org/news/chrome-extension-message-passing-essentials/
+Inspiration taken from:
+https://dev.to/tommyli97/building-my-first-chrome-extension-reddit-filter-312m
