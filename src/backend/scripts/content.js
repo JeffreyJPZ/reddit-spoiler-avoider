@@ -85,7 +85,7 @@ const doesPostMatchFilters = (postSubredditName, postDateTime, subredditFilterOp
     let subreddit = subredditFilterOptions[postSubredditName]; // get options associated with post subreddit name
 
     let filterCategory = subreddit.filterCategory;
-    let filterDate = new Date(subreddit.filterDateTime);
+    let filterDate = new Date(subreddit.filterDateTime + 'Z'); // convert to UTC
     let postDate = new Date(postDateTime);
 
     return (filterCategory === "before" && postDate <= filterDate) ||
