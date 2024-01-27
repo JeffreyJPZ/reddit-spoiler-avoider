@@ -1,7 +1,8 @@
 # Subreddit Time Filter
 
 A tool for blocking posts from specific subreddits on Old Reddit to avoid spoilers
-or to increase productivity. Written in JavaScript and HTML, styled using CSS, and tested using Jest and Puppeteer.
+or to increase productivity. 
+Written in JavaScript and HTML, styled using CSS, bundled using Webpack, and tested using Jest and Puppeteer.
 
 Inspiration taken from:
 https://dev.to/tommyli97/building-my-first-chrome-extension-reddit-filter-312m
