@@ -32,10 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 /**
- *
- * @description goes through each element and deletes the element if:
- *              the element is a post, the subreddit that the post belongs to matches an active subreddit filter,
- *              and the post date matches with the filter category and date of the filter
+ * @description gets the container with the posts and filters out posts matching the active subreddit filter options
  */
 const filterPosts = async () => {
     const elementsContainerID = "siteTable";
@@ -45,8 +42,26 @@ const filterPosts = async () => {
 
     // skips filtering if there are no active subreddits or no posts
     if (shouldFilter(subredditFilterOptions, elements)) {
+        tryFilter(subredditFilterOptions, elements);
+    }
+}
 
-        for (let element of elements.children) {
+/**
+ * @param subredditFilterOptions The active subreddit filter options
+ * @param elements The container for the current set of posts
+ * @description goes through each element and deletes the element if:
+ *              the element is a post, the subreddit that the post belongs to matches an active subreddit filter,
+ *              and the post date matches with the filter category and date of the filter
+ */
+const tryFilter = (subredditFilterOptions, elements) => {
+
+    for (let element of elements.children) {
+
+        // handles Reddit Enhancement Suite's never ending scroll feature,
+        // eventually terminates as number of children is finite
+        if (element.getAttribute("class") === "sitetable linklisting") {
+            tryFilter(subredditFilterOptions, element);
+        } else {
             let postSubredditName = element.getAttribute("data-subreddit");
 
             // check if postSubredditName exists and post name matches an active subreddit
@@ -58,7 +73,6 @@ const filterPosts = async () => {
                     elements.removeChild(element);
                 }
             }
-
         }
     }
 }
