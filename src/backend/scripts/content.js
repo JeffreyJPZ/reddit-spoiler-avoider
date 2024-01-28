@@ -69,7 +69,7 @@ const filterPosts = async () => {
  * @description Returns true if subreddit filter options exist in storage and if there are posts to filter
  */
 const shouldFilter = (subredditFilterOptions, elements) => {
-    return subredditFilterOptions !== null && Object.keys(subredditFilterOptions).length > 0 && elements !== null
+    return subredditFilterOptions !== null && elements !== null;
 }
 
 /**
