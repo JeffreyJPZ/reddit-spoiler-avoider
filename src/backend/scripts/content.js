@@ -41,35 +41,39 @@ const filterPosts = async () => {
     const subredditFilterOptions = JSON.parse(window.localStorage.getItem('subredditFilterOptions'));
 
     // skips filtering if there are no active subreddits or no posts
-    if (shouldFilter(subredditFilterOptions, elements)) {
-        tryFilter(subredditFilterOptions, elements);
+    if (shouldFilter(elements, subredditFilterOptions)) {
+        tryFilter(elements, subredditFilterOptions);
     }
 }
 
 /**
+ * @param elements The container for all elements
  * @param subredditFilterOptions The active subreddit filter options
+ * @description Returns true if subreddit filter options exist in storage and if there are elements
+ */
+const shouldFilter = (elements, subredditFilterOptions) => {
+    return subredditFilterOptions !== null && elements !== null;
+}
+
+/**
  * @param elements The container for the current set of posts
+ * @param subredditFilterOptions The active subreddit filter options
  * @description goes through each element and deletes the element if:
  *              the element is a post, the subreddit that the post belongs to matches an active subreddit filter,
  *              and the post date matches with the filter category and date of the filter
  */
-const tryFilter = (subredditFilterOptions, elements) => {
+const tryFilter = (elements, subredditFilterOptions) => {
 
     for (let element of elements.children) {
 
         // handles Reddit Enhancement Suite's never ending scroll feature,
         // eventually terminates as number of children is finite
         if (element.getAttribute("class") === "sitetable linklisting") {
-            tryFilter(subredditFilterOptions, element);
+            tryFilter(element, subredditFilterOptions); // element has multiple children
         } else {
-            let postSubredditName = element.getAttribute("data-subreddit");
+            if (isElementAPost(element)) {
 
-            // check if postSubredditName exists and post name matches an active subreddit
-            if (isPostNameValid(postSubredditName, subredditFilterOptions)) {
-                let postDateTime = element.getElementsByTagName("time")[0].getAttribute("datetime");
-
-                // subreddit matches
-                if (doesPostMatchFilters(postSubredditName, postDateTime, subredditFilterOptions)) {
+                if (doesPostMatchFilters(element, subredditFilterOptions)) {
                     elements.removeChild(element);
                 }
             }
@@ -78,41 +82,38 @@ const tryFilter = (subredditFilterOptions, elements) => {
 }
 
 /**
- * @param subredditFilterOptions The active subreddit filter options
- * @param elements The container for posts
- * @description Returns true if subreddit filter options exist in storage and if there are posts to filter
+ * @param element The component to check
+ * @description Returns true if element is a post
  */
-const shouldFilter = (subredditFilterOptions, elements) => {
-    return subredditFilterOptions !== null && elements !== null;
+const isElementAPost = (element) => {
+    const postSubredditName = element.getAttribute("data-subreddit");
+    return postSubredditName !== (null | "");
 }
 
 /**
- *
- * @param postSubredditName The name of the subreddit that the post is associated with
- * @param postDateTime The timestamp of the post
+ * @param element The post to check using the active subreddit filter options
  * @param subredditFilterOptions The active subreddit filter options
- * @description Returns true if, for a given post for an active subreddit filter, either:
+ * @description Returns true if the subreddit that the post belongs to is active, and either:
  *              postDateTime falls before the specified datetime when the category for the subreddit is "before"
  *              postDateTime falls after the specified datetime when the category for the subreddit is "after"
+ *              otherwise, returns false
  */
-const doesPostMatchFilters = (postSubredditName, postDateTime, subredditFilterOptions) => {
-    let subreddit = subredditFilterOptions[postSubredditName]; // get options associated with post subreddit name
+const doesPostMatchFilters = (element, subredditFilterOptions) => {
+    const postSubredditName = element.getAttribute("data-subreddit");
+    const subreddit = subredditFilterOptions[postSubredditName]; // get options associated with post subreddit name
 
-    let filterCategory = subreddit.filterCategory;
-    let filterDate = new Date(subreddit.filterDateTime + 'Z'); // convert to UTC
-    let postDate = new Date(postDateTime);
+    if (subreddit === undefined) { // subreddit is not active
+        return false;
+    }
+
+    const postDateTime = element.getElementsByTagName("time")[0].getAttribute("datetime");
+
+    const filterCategory = subreddit.filterCategory;
+    const filterDate = new Date(subreddit.filterDateTime + 'Z'); // convert to UTC
+    const postDate = new Date(postDateTime);
 
     return (filterCategory === "before" && postDate <= filterDate) ||
         (filterCategory === "after" && postDate >= filterDate);
-}
-
-/**
- * @param postSubredditName The name of the subreddit that a post is associated with, if it exists
- * @param subredditFilterOptions The active subreddit filter options
- * @description Returns true if postSubredditName is a valid name and matches an active subreddit filter
- */
-const isPostNameValid = (postSubredditName, subredditFilterOptions) => {
-    return postSubredditName !== (null | "") && subredditFilterOptions[postSubredditName] !== undefined;
 }
 
 /**
