@@ -19,15 +19,15 @@ html {
     justify-items: center;
 }
 
+button {
+    background-color: #FF5700;
+    color: snow;
+    cursor: pointer;
+}
+
 .button {
     display: flex;
     justify-content: center;
     justify-items: center;
     margin: 20px;
-}
-
-button {
-    background-color: #FF5700;
-    color: snow;
-    outline-width: 0;
 }

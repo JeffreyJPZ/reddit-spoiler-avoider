@@ -60,7 +60,7 @@ select {
 button {
     background-color: #FF5700;
     color: snow;
-
+    cursor: pointer;
 }
 
 .button {
@@ -69,3 +69,5 @@ button {
     justify-items: center;
     margin: 20px;
 }
+
+
