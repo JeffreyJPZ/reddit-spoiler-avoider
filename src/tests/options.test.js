@@ -2,7 +2,6 @@
  * Tests for options page
  */
 
-// need to fix ReferenceError in tests
 const TIMEOUT = 0;
 
 /**
@@ -11,7 +10,7 @@ const TIMEOUT = 0;
 
 beforeAll(async () => {
 
-    const optionsURL = 'http://localhost:63342/subreddit-time-filter/dist/options.html';
+    const optionsURL = 'chrome-extension://mfjkehlppkpfjhgpmkleodnijoccllcm/options.html';
     await page.goto(optionsURL, {waitUntil: 'domcontentloaded', timeout: TIMEOUT});
 
 });
