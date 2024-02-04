@@ -12,7 +12,7 @@
     "webpack-extension-manifest-plugin": "^0.8.0"
   },
   "scripts": {
-    "test": "jest --config=./src/e2e/jest.config.js --forceExit --detectOpenHandles",
+    "test": "jest --config=./src/tests/jest.config.js --forceExit --detectOpenHandles",
     "build": "webpack --mode production",
     "build-prod": "webpack --mode development"
   },
