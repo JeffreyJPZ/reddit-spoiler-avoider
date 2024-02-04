@@ -7,12 +7,9 @@ const TIMEOUT = 0;
 /**
  * Setup for tests
  */
-
 beforeAll(async () => {
-
     const optionsURL = 'chrome-extension://mfjkehlppkpfjhgpmkleodnijoccllcm/options.html';
     await page.goto(optionsURL, {waitUntil: 'domcontentloaded', timeout: TIMEOUT});
-
 });
 
 /**
@@ -31,7 +28,7 @@ describe("Test initial state", () => {
 
         expect(tableLength).toBe(0);
     });
-})
+});
 
 /**
  * Tests adding subreddits
