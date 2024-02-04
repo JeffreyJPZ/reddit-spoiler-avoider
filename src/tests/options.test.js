@@ -2,7 +2,7 @@
  * Tests for options page
  */
 
-const TIMEOUT = 0;
+const TIMEOUT = 3000;
 
 /**
  * Setup for tests
