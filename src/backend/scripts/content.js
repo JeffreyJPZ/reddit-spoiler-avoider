@@ -24,6 +24,13 @@ document.addEventListener("scroll", async () => {
     }
 });
 
+// Requests for active subreddit filters when page is first loaded and refresh filters has not been pressed yet
+try {
+    chrome.runtime.sendMessage(JSON.stringify({key: 'requestFilters'})).then();
+} catch (err) {
+    console.log(err);
+}
+
 // Runs script when new page is loaded manually using Reddit Enhancement Suite
 // Credit to https://stackoverflow.com/a/8866924
 document.getElementById(elementsContainerID).addEventListener("DOMNodeInserted", async (e) => {

@@ -6,27 +6,23 @@
 // Listens for messages from popup or content script
 chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     const parsedMessage = JSON.parse(message);
-    if (parsedMessage.key === 'refreshFilters') {
-        filterSubreddits().then(sendResponse(''));
-
+    if (parsedMessage.key === 'refreshFilters' || parsedMessage.key === 'requestFilters') {
+        getActiveSubreddits().then(sendResponse(''));
     }
-
     return true;
 });
 
 /**
  * @description Retrieves only the active subreddits from storage and passes the subreddits to the content script
  */
-const filterSubreddits = async () => {
+const getActiveSubreddits = async () => {
     chrome.storage.local.get(null, async (subreddits) => {
-
         const activeSubreddits = {}
         for (let name in subreddits) {
             if (subreddits[name].isActive) {
                 activeSubreddits[name] = subreddits[name];
             }
         }
-
         await sendMessage('filter', activeSubreddits);
     });
 }
