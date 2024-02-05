@@ -2,6 +2,8 @@
  * Content script for reddit pages in old reddit
  * */
 
+const elementsContainerID = "siteTable"; // ID of container with all posts
+
 // Receives data from background script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const parsedMessage = JSON.parse(message);
@@ -22,12 +24,15 @@ document.addEventListener("scroll", async () => {
     }
 });
 
-// Runs script when user refreshes or navigates to next page
-document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        await filterPosts();
-    } catch (err) {
-        console.log(err);
+// Runs script when new page is loaded manually using Reddit Enhancement Suite
+// Credit to https://stackoverflow.com/a/8866924
+document.getElementById(elementsContainerID).addEventListener("DOMNodeInserted", async (e) => {
+    if (e.target.parentNode.id === elementsContainerID) {
+        try {
+            await filterPosts();
+        } catch (err) {
+            console.log(err);
+        }
     }
 });
 
@@ -35,9 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
  * @description gets the container with the posts and filters out posts matching the active subreddit filter options
  */
 const filterPosts = async () => {
-    const elementsContainerID = "siteTable";
     const elements = document.getElementById(elementsContainerID); // container with all posts
-
     const subredditFilterOptions = JSON.parse(window.localStorage.getItem('subredditFilterOptions'));
 
     // skips filtering if there are no active subreddits or no posts
@@ -122,4 +125,11 @@ const doesPostMatchFilters = (element, subredditFilterOptions) => {
  */
 const setSubreddits = (subreddits) => {
     window.localStorage.setItem('subredditFilterOptions', JSON.stringify(subreddits));
+}
+
+// Runs script when document first finishes loading or page is refreshed
+try {
+    filterPosts().then();
+} catch (err) {
+    console.log(err);
 }
