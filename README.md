@@ -23,5 +23,5 @@ https://dev.to/tommyli97/building-my-first-chrome-extension-reddit-filter-312m
 6. The extension should now be loaded, and an icon should appear in the toolbar next to the searchbar. For information on how to use the extension, click on the icon to open a popup. Enjoy!
 
 ## Possible Improvements:
-- Create a database layer, as the extension relies on the chrome storage implementation currently
+- Create a database layer, as the extension relies on the Chrome Storage implementation currently
 - Write more integration tests to test if values are being stored properly, which needs a database layer that exposes the right methods
