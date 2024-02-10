@@ -24,26 +24,35 @@ table {
     margin-right: auto;
     margin-left: auto;
     background-color: #3d3d3d;
-    border: 2px solid black;
+    border: 2px solid darkred;
     border-collapse: collapse;
 }
 
 th {
     color: #FF5700;
     text-align: center;
-    border: 2px solid black;
+    border: 2px solid darkred;
     border-collapse: collapse;
 }
 
 td {
     color: snow;
     text-align: center;
-    border: 2px solid black;
+    border: 2px solid darkred;
     border-collapse: collapse;
 }
 
 input {
+    border-radius: 6px;
+    border-color: black;
     background-color: #aaaaaa;
+    transition-duration: 0.2s;
+}
+
+input:hover {
+    border-color: #FF5700;
+    background-color: snow;
+    color: black;
 }
 
 .input {
@@ -55,12 +64,28 @@ input {
 
 select {
     background-color: #aaaaaa;
+    transition-duration: 0.2s;
+}
+
+select:hover {
+    border-color: #FF5700;
+    background-color: snow;
+    color: black;
 }
 
 button {
+    border-radius: 6px;
+    border-color: darkred;
     background-color: #FF5700;
     color: snow;
     cursor: pointer;
+    transition-duration: 0.2s;
+}
+
+button:hover {
+    border-color: #FF5700;
+    background-color: snow;
+    color: black;
 }
 
 .button {

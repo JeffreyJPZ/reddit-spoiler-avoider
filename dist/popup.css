@@ -20,9 +20,18 @@ html {
 }
 
 button {
+    border-radius: 6px;
+    border-color: darkred;
     background-color: #FF5700;
     color: snow;
     cursor: pointer;
+    transition-duration: 0.2s;
+}
+
+button:hover {
+    border-color: #FF5700;
+    background-color: snow;
+    color: black;
 }
 
 .button {
