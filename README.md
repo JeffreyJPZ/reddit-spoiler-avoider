@@ -21,3 +21,7 @@ https://dev.to/tommyli97/building-my-first-chrome-extension-reddit-filter-312m
 4. From the extensions menu, click on the **Load unpacked** button at the top left of the page.
 5. When prompted to select the location of the extension directory, navigate to where you unzipped the extension folder, click on the folder, then choose the **dist** folder inside.
 6. The extension should now be loaded, and an icon should appear in the toolbar next to the searchbar. For information on how to use the extension, click on the icon to open a popup. Enjoy!
+
+## Possible Improvements:
+- Create a database layer, as the extension relies on the chrome storage implementation currently
+- Write more integration tests to test if values are being stored properly, which needs a database layer that exposes the right methods
