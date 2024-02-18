@@ -58,13 +58,9 @@ const addSubreddit = async () => {
  *              otherwise adds a subreddit to storage with the given name and updates the table
  */
 const addSubredditFromInput = async (name) => {
-
     chrome.storage.local.get(name, async (result) => {
-
         if (!(name in result)) {
-
             const subredditOptions = {};
-
             subredditOptions[name] = {
                 filterCategory: "before",
                 filterDateTime: parseUTCDate(new Date()),
@@ -75,7 +71,6 @@ const addSubredditFromInput = async (name) => {
             await chrome.storage.local.set(subredditOptions);
 
             addSubredditToTable(name, null, null, null, null);
-
         } else {
             console.log("Duplicate subreddit " + name + " was not added");
         }
@@ -270,7 +265,6 @@ const deleteSubreddits = async () => {
 
 /**
  * @description Updates subreddit table if no names are duplicated or empty, and if no datetimes are empty
- *              otherwise resets options to the currently stored options
  */
 const updateSubreddits = async () => {
     const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
@@ -285,7 +279,7 @@ const updateSubreddits = async () => {
         let name = subreddit.children[nameColumn].getElementsByTagName("input")[0].value;
         let filterDateTime = subreddit.children[filterDateTimeColumn].getElementsByTagName("input")[0].value;
 
-        // check for duplication in table
+        // check for duplication or empty fields in table
         if (checkedSubreddits[name] || name === "" || filterDateTime === "") {
             shouldUpdate = false;
             break;
@@ -311,6 +305,8 @@ const updateSubredditsFromInput = async () => {
     const filterDateTimeColumn = 2; // column index for datetime
     const isActiveColumn = 3; // column index for activebox
 
+    const oldNames = [];
+
     for (let i = 0; i < subreddits.rows.length; i++) {
         let subreddit = subreddits.rows[i];
 
@@ -323,8 +319,8 @@ const updateSubredditsFromInput = async () => {
         let isActive = subreddit.children[isActiveColumn].getElementsByTagName("input")[0].checked;
 
         if (oldName !== newName) {
-            // removes old item only if name has been changed
-            await chrome.storage.local.remove(oldName);
+            // appends old name only if name has been changed
+            oldNames.push(oldName);
         }
 
         const subredditOptions = {};
@@ -340,6 +336,8 @@ const updateSubredditsFromInput = async () => {
         subreddit.children[nameColumn].getElementsByTagName("input")[0].setAttribute("value", newName);
     }
 
+    // remove at end to minimize # of database accesses
+    await chrome.storage.local.remove(oldNames);
 }
 
 /**
