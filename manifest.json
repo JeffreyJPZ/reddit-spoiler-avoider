@@ -18,5 +18,5 @@
     "service_worker": "./background.js"
   },
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAosrBgw+DZJCJGET+Et5JGgVaKA5wLNiq+CC/x7kfAjD0Proj2UovtYBtcHQYS3lcWLOPXWtLoF+K+ecA3UY75eOLJXkuoNAphq6vnfauYApb6PIa86j2sL5MMztzE/+M/lAUR1XzYGgNLznoQlqTqzh21Xaq1JJnGDMn7SIkw0ZMqmIsJ8368BV6zDdjXN7GWq0whCL3Mwvb1F9zg9xqUVZX5n0SZ8fxvJzPvZ0uvq7A7FupjudVyoyQ37BuAETm0ZJrqy27es85M3uXJfZBhHfRk3sDurw/XTciCv9ehtt60qfh41wQVhdr/xTDNoNKcoHZOz8O9PcXlENyHPzgvQIDAQAB",
-  "permissions": ["scripting", "tabs", "storage"]
+  "permissions": ["scripting", "tabs", "storage", "unlimitedStorage"]
 }
