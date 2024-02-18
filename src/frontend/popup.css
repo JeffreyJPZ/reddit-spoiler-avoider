@@ -2,7 +2,7 @@ html {
     background-color: #212121;
     min-width: 400px;
     min-height: 400px;
-    margin: 10px;
+    margin: 0.5em;
 }
 
 .subtitle {
@@ -20,8 +20,8 @@ html {
 }
 
 button {
-    border-radius: 6px;
-    border-color: darkred;
+    border: 0.2em solid darkred;
+    border-radius: 2em;
     background-color: #FF5700;
     color: snow;
     cursor: pointer;
@@ -29,7 +29,8 @@ button {
 }
 
 button:hover {
-    border-color: #FF5700;
+    border: 0.2em solid #FF5700;
+    border-radius: 2em;
     background-color: snow;
     color: black;
 }
@@ -38,5 +39,5 @@ button:hover {
     display: flex;
     justify-content: center;
     justify-items: center;
-    margin: 20px;
+    margin: 2em;
 }
