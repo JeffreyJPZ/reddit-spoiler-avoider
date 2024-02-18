@@ -1,7 +1,7 @@
 # Subreddit Time Filter
 
 ## Description:
-An extension for blocking posts from subreddits within a specific time range on Reddit to avoid spoilers
+An extension for blocking posts from subreddits within a specific time range on Old Reddit or New Reddit to avoid spoilers
 or to decrease clutter. Written in JavaScript and HTML using the Chrome API, styled with CSS, bundled with Webpack, and tested with Jest and Puppeteer.
 
 This filter is compatible with Reddit Enhancement Suite's never-ending scrolling feature,
