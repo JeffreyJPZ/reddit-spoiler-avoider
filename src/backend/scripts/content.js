@@ -65,7 +65,7 @@ const shouldFilter = (elements, subredditFilterOptions) => {
  * @param elements The container for the current set of posts
  * @param subredditFilterOptions The active subreddit filter options
  * @param feedType The version of reddit and the particular page type, if applicable
- * @description goes through each element and deletes the element if:
+ * @description goes through each element and hides the element if:
  *              the element is a post, the subreddit that the post belongs to matches an active subreddit filter,
  *              and the post date matches with the filter category and date of the filter
  */
@@ -81,7 +81,7 @@ const tryFilter = (elements, subredditFilterOptions, feedType) => {
             // handles Reddit Enhancement Suite's infinite scroll
             tryFilter(element, subredditFilterOptions, feedType);
         } else if (isElementAPost(element, feedType) && doesPostMatchFilters(element, subredditFilterOptions, feedType)) {
-            removePost(elements, element, feedType);
+            hidePost(element, feedType);
         }
     }
 }
@@ -120,18 +120,13 @@ const doesPostMatchFilters = (element, subredditFilterOptions, feedType) => {
 
     switch (feedType) {
         case OLD_REDDIT:
-            postSubredditName = element.getAttribute('data-subreddit');
-            postDateTime = parseFloat(element.getAttribute('data-timestamp'));
-            break;
-        case NEW_REDDIT_SUBREDDIT:
-        case NEW_REDDIT_HOME:
-            postSubredditName = element.getElementsByTagName('shreddit-post')[0]
-                                       .getAttribute('subreddit-prefixed-name')
-                                       .substring(2); // removes subreddit prefix
-            postDateTime = element.getElementsByTagName('shreddit-post')[0]
-                                  .getAttribute('created-timestamp');
+            postSubredditName = getPostSubreddit(element, feedType);
+            postDateTime = parseFloat(getPostDateTime(element, feedType));
             break;
         default:
+            postSubredditName = getPostSubreddit(element, feedType);
+            postDateTime = getPostDateTime(element, feedType);
+            break;
     }
 
     const subreddit = subredditFilterOptions[postSubredditName]; // get options associated with post subreddit name
@@ -148,22 +143,70 @@ const doesPostMatchFilters = (element, subredditFilterOptions, feedType) => {
 }
 
 /**
- * @param elements The parent container of the post
+ * @param element The post to check using the active subreddit filter options
+ * @param feedType The version of reddit and the particular page type, if applicable
+ * @description Returns the subreddit name that the post belongs to according to the feed type
+ */
+const getPostSubreddit = (element, feedType) => {
+    switch (feedType) {
+        case OLD_REDDIT:
+            return element.getAttribute('data-subreddit');
+        default:
+            return element.getElementsByTagName('shreddit-post')[0]
+                          .getAttribute('subreddit-prefixed-name')
+                          .substring(2); // removes subreddit prefix
+    }
+}
+
+/**
+ * @param element The post to check using the active subreddit filter options
+ * @param feedType The version of reddit and the particular page type, if applicable
+ * @description Returns the datetime of the post according to the feed type
+ */
+const getPostDateTime = (element, feedType) => {
+    switch (feedType) {
+        case OLD_REDDIT:
+            return element.getAttribute('data-timestamp');
+        default:
+            return element.getElementsByTagName('shreddit-post')[0]
+                          .getAttribute('created-timestamp');
+    }
+}
+
+/**
  * @param post The post to remove
  * @param feedType The version of reddit and the particular page type, if applicable
- * @description Removes the post according to the given feed type by deleting it from its parent container
+ * @description Hides the post according to the given feed type
  */
-const removePost = (elements, post, feedType) => {
+const hidePost = (post, feedType) => {
     switch (feedType) {
         case OLD_REDDIT:
         case NEW_REDDIT_SUBREDDIT:
         case NEW_REDDIT_HOME:
-            elements.removeChild(post);
+            // allows post to still be clickable
+            post.style.opacity = 0;
             break;
         default:
             return;
     }
 }
+
+// /**
+//  * @param post The post to remove
+//  * @param feedType The version of reddit and the particular page type, if applicable
+//  * @description Removes the post according to the given feed type
+//  */
+// const removePost = (post, feedType) => {
+//     switch (feedType) {
+//         case OLD_REDDIT:
+//         case NEW_REDDIT_SUBREDDIT:
+//         case NEW_REDDIT_HOME:
+//             post.style.display = "none";
+//             break;
+//         default:
+//             return;
+//     }
+// }
 
 /**
  * @param subreddits The active subreddit filter options

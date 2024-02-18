@@ -8,7 +8,7 @@ html {
     justify-items: center;
     font-size: xx-large;
     color: #FF5700;
-    margin: 10px;
+    margin: 0.5em;
 }
 
 .subtitle {
@@ -17,40 +17,40 @@ html {
     justify-items: center;
     font-size: small;
     color: snow;
-    margin: 10px;
+    margin: 0.5em;
 }
 
 table {
     margin-right: auto;
     margin-left: auto;
     background-color: #3d3d3d;
-    border: 2px solid darkred;
+    border: 0.2em solid darkred;
     border-collapse: collapse;
 }
 
 th {
     color: #FF5700;
     text-align: center;
-    border: 2px solid darkred;
+    border: 0.2em solid darkred;
     border-collapse: collapse;
 }
 
 td {
     color: snow;
     text-align: center;
-    border: 2px solid darkred;
+    border: 0.2em solid darkred;
     border-collapse: collapse;
 }
 
 input {
-    border-radius: 6px;
-    border-color: black;
+    border: 0.2em solid #FF5700;
+    border-radius: 2em;
     background-color: #aaaaaa;
     transition-duration: 0.2s;
 }
 
 input:hover {
-    border-color: #FF5700;
+    border:0.2em solid #FF5700;
     background-color: snow;
     color: black;
 }
@@ -59,23 +59,35 @@ input:hover {
     display: flex;
     justify-content: center;
     justify-items: center;
-    margin: 10px;
+    margin: 2em;
+}
+
+#subredditInput {
+    border: 0.2em solid snow;
+    transition-duration: 0.2s;
+}
+
+#subredditInput:hover {
+    border: 0.2em solid #FF5700;
 }
 
 select {
+    border: 0.2em solid #FF5700;
+    border-radius: 2em;
     background-color: #aaaaaa;
     transition-duration: 0.2s;
 }
 
 select:hover {
-    border-color: #FF5700;
+    border: 0.2em solid #FF5700;
+    border-radius: 2em;
     background-color: snow;
     color: black;
 }
 
 button {
-    border-radius: 6px;
-    border-color: darkred;
+    border: 0.2em solid darkred;
+    border-radius: 2em;
     background-color: #FF5700;
     color: snow;
     cursor: pointer;
@@ -83,7 +95,8 @@ button {
 }
 
 button:hover {
-    border-color: #FF5700;
+    border: 0.2em solid #FF5700;
+    border-radius: 2em;
     background-color: snow;
     color: black;
 }
@@ -92,6 +105,6 @@ button:hover {
     display: flex;
     justify-content: center;
     justify-items: center;
-    margin: 20px;
+    margin: 2em;
 }
 
