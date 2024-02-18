@@ -1,4 +1,4 @@
-# Subreddit Time Filter
+# Reddit Spoiler Avoider
 
 ## Description:
 An extension for blocking posts from subreddits within a specific time range on Old Reddit or New Reddit to avoid spoilers
