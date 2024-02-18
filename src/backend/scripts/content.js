@@ -158,7 +158,6 @@ const removePost = (elements, post, feedType) => {
         case OLD_REDDIT:
         case NEW_REDDIT_SUBREDDIT:
         case NEW_REDDIT_HOME:
-            // elements.removeChild(post.nextSibling); // removes border element after the post (CANT HAVE THIS)
             elements.removeChild(post);
             break;
         default:
