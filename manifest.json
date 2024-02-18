@@ -1,15 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Subreddit Time Filter",
-  "description": "Avoid spoilers and stay productive with this blocker",
+  "name": "Reddit Spoiler Avoider",
+  "description": "Avoid spoilers and stay ignorant with this blocker for Reddit. Filter posts from subreddits before or after a given date and time.",
   "version": "1.0",
   "action": {
-    "default_title": "Temp Subreddit Blocker",
+    "default_title": "Reddit Spoiler Avoider",
     "default_popup": "./popup.html"
   },
-  "host_permissions": [
-    "https://*/*"
-  ],
   "content_scripts": [
     {
       "matches": ["https://old.reddit.com/*", "https://www.reddit.com/*"],
