@@ -17,12 +17,14 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
  */
 const getActiveSubreddits = async () => {
     chrome.storage.local.get(null, async (subreddits) => {
+
         const activeSubreddits = {}
         for (let name in subreddits) {
             if (subreddits[name].isActive) {
                 activeSubreddits[name] = subreddits[name];
             }
         }
+
         await sendMessage('filter', activeSubreddits);
     });
 }

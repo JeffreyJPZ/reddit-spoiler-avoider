@@ -79,9 +79,7 @@ const addSubredditFromInput = async (name) => {
         } else {
             console.log("Duplicate subreddit " + name + " was not added");
         }
-
     });
-
 }
 
 /**
