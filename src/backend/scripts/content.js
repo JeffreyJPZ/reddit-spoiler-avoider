@@ -8,21 +8,44 @@ const OLD_REDDIT = "oldReddit" // flag indicating Old Reddit
 const NEW_REDDIT_SUBREDDIT = "newRedditSubreddit" // flag indicating subreddit page for New Reddit
 const NEW_REDDIT_HOME = "newRedditHome" // flag indicating home page for New Reddit
 
+let scrolled = true; // flag indicating whether to handle scroll event
+
 // Receives data from background script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const parsedMessage = JSON.parse(message);
 
     if (parsedMessage.key === 'filter') {
-        setSubreddits(parsedMessage.data);
-        filterPosts().then(sendResponse(''));
+        // caches active subreddit filter options
+        cacheSubreddits(parsedMessage.data);
+        try {
+            filterPosts();
+        } catch (err) {
+            console.log(err);
+        }
+        sendResponse('');
     }
     return true;
+});
+
+// Runs script when user scrolls
+// Credit to https://stackoverflow.com/a/34822169 and https://stackoverflow.com/a/50628760 for limiting scroll events
+document.addEventListener("scroll", () => {
+    if (scrolled) {
+        scrolled = false;
+        try {
+            filterPosts();
+        } catch (err) {
+            console.log(err);
+        }
+
+        setTimeout(() => {scrolled = true}, 1000);
+    }
 });
 
 /**
  * @description gets the container with the posts and filters out posts matching the active subreddit filter options
  */
-const filterPosts = async () => {
+const filterPosts = () => {
     let elements = document.getElementById(ELEMENTS_ID_NEW_REDDIT); // assumes New Reddit
     let feedType;
 
@@ -44,9 +67,9 @@ const filterPosts = async () => {
         }
     }
 
-    const subredditFilterOptions = JSON.parse(window.localStorage.getItem('subredditFilterOptions'));
+    const subredditFilterOptions = JSON.parse(window.localStorage.getItem('subredditFilterOptions')) || null;
 
-    // skips filtering if there are no active subreddits or no posts
+    // skips filtering if there are no active subreddits
     if (shouldFilter(elements, subredditFilterOptions)) {
         tryFilter(elements, subredditFilterOptions, feedType);
     }
@@ -68,20 +91,23 @@ const shouldFilter = (elements, subredditFilterOptions) => {
  * @description goes through each element and hides the element if:
  *              the element is a post, the subreddit that the post belongs to matches an active subreddit filter,
  *              and the post date matches with the filter category and date of the filter
+ *              otherwise, skips the element if it is a post and has already been hidden
  */
 const tryFilter = (elements, subredditFilterOptions, feedType) => {
 
     for (let element of elements.children) {
+        if (isElementAPost(element, feedType)
+            && !isPostHidden(element, feedType)
+            && doesPostMatchFilters(element, subredditFilterOptions, feedType)) {
 
-        if (feedType === NEW_REDDIT_SUBREDDIT && element.tagName === "FACEPLATE-BATCH") {
+            hidePost(element, feedType);
+        } else if (feedType === NEW_REDDIT_SUBREDDIT && element.tagName === "FACEPLATE-BATCH") {
             // handles New Reddit's infinite scroll on subreddit page
             // eventually terminates as number of children is finite
             tryFilter(element, subredditFilterOptions, feedType)  // element has multiple children
-        } else if (feedType === OLD_REDDIT && element.getAttribute('class') === "sitetable linklisting") {
+        } else if (feedType === OLD_REDDIT && element.getAttribute("class") === "sitetable linklisting") {
             // handles Reddit Enhancement Suite's infinite scroll
             tryFilter(element, subredditFilterOptions, feedType);
-        } else if (isElementAPost(element, feedType) && doesPostMatchFilters(element, subredditFilterOptions, feedType)) {
-            hidePost(element, feedType);
         }
     }
 }
@@ -183,11 +209,26 @@ const hidePost = (post, feedType) => {
         case OLD_REDDIT:
         case NEW_REDDIT_SUBREDDIT:
         case NEW_REDDIT_HOME:
-            // allows post to still be clickable
-            post.style.opacity = 0;
+            post.style.opacity = 0; // allows post to still be clickable
             break;
         default:
             return;
+    }
+}
+
+/**
+ * @param post The post to check
+ * @param feedType The version of reddit and the particular page type, if applicable
+ * @description Returns whether the post is hidden
+ */
+const isPostHidden = (post, feedType) => {
+    switch (feedType) {
+        case OLD_REDDIT:
+        case NEW_REDDIT_SUBREDDIT:
+        case NEW_REDDIT_HOME:
+            return post.style.opacity === 0;
+        default:
+            return false;
     }
 }
 
@@ -209,25 +250,25 @@ const hidePost = (post, feedType) => {
 // }
 
 /**
- * @param subreddits The active subreddit filter options
+ * @param subredditFilterOptions The active subreddit filter options
  * @description Saves the given subreddit filter options to storage
  */
-const setSubreddits = (subreddits) => {
-    window.localStorage.setItem('subredditFilterOptions', JSON.stringify(subreddits));
+const cacheSubreddits = (subredditFilterOptions) => {
+    window.localStorage.setItem('subredditFilterOptions', JSON.stringify(subredditFilterOptions));
 }
 
-// Requests for active subreddit filters when page is first loaded and refresh filters has not been pressed yet
+// Attempts to filter when page is first loaded and refresh filters has not been pressed yet
 try {
-    chrome.runtime.sendMessage(JSON.stringify({key: 'requestFilters'})).then();
+    filterPosts();
 } catch (err) {
     console.log(err);
 }
 
-// Runs script periodically, beginning when document first finishes loading or page is refreshed
+// Attempts to run the script occasionally
 setInterval(() => {
     try {
-        filterPosts().then();
+        filterPosts();
     } catch (err) {
         console.log(err);
     }
-}, 4);
+}, 1000);
