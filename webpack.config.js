@@ -4,8 +4,9 @@
 
 const path = require('path');
 const htmlWebpackPlugin = require('html-webpack-plugin');
-const miniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpackExtensionManifestPlugin = require("webpack-extension-manifest-plugin");
+const miniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpackExtensionManifestPlugin = require('webpack-extension-manifest-plugin');
+const copyPlugin = require('copy-webpack-plugin');
 
 const DIST_PATH = path.resolve(__dirname, "dist");
 
@@ -16,7 +17,7 @@ module.exports = [
             popup: './src/backend/popup.js',
             options: './src/backend/options.js',
             background: './src/backend/background.js',
-            content: './src/backend/scripts/content.js'
+            content: './src/backend/scripts/content.js',
         },
         plugins: [
             new htmlWebpackPlugin({
@@ -40,24 +41,29 @@ module.exports = [
                 config: {
                     base: 'manifest.json'
                 }
+            }),
+            new copyPlugin({
+                patterns: [
+                    {from: './src/icons', to: 'static'}
+                ]
             })],
         module: {
             rules: [
                 {
                     test: /\.css$/i,
-                    use: [miniCssExtractPlugin.loader, "css-loader"]
+                    use: [miniCssExtractPlugin.loader, 'css-loader']
                 },
                 {
                     test: /\.js$/i,
-                    loader: "babel-loader",
+                    loader: 'babel-loader',
                     exclude: /(node_modules)/
-                },
+                }
             ],
         },
         output: {
-            filename: '[name].js',           // Specifies where to place the bundled files
+            filename: 'js/[name].js',           // Specifies where to place the bundled files
             path: DIST_PATH,
             clean: true                      // Removes any old unused files
         }
-    }
+    },
 ];
