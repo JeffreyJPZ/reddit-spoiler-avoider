@@ -16,17 +16,16 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
  * @description Retrieves only the active subreddits from storage and passes the subreddits to the content script
  */
 const getActiveSubreddits = async () => {
-    chrome.storage.local.get(null, async (subreddits) => {
+    const result = await chrome.storage.local.get(null);
 
-        const activeSubreddits = {}
-        for (let name in subreddits) {
-            if (subreddits[name].isActive) {
-                activeSubreddits[name] = subreddits[name];
-            }
+    const activeSubreddits = {}
+    for (let name in result) {
+        if (result[name].isActive) {
+            activeSubreddits[name] = result[name];
         }
+    }
 
-        await sendMessage('filter', activeSubreddits);
-    });
+    await sendMessage('filter', activeSubreddits);
 }
 
 /**
