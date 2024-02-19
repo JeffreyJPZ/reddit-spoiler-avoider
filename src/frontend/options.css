@@ -50,7 +50,7 @@ input {
 }
 
 input:hover {
-    border:0.2em solid #FF5700;
+    border:0.2em solid darkred;
     background-color: snow;
     color: black;
 }
@@ -79,7 +79,7 @@ select {
 }
 
 select:hover {
-    border: 0.2em solid #FF5700;
+    border: 0.2em solid darkred;
     border-radius: 2em;
     background-color: snow;
     color: black;
