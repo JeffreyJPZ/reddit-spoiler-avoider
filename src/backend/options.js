@@ -11,6 +11,7 @@ const addListeners = () => {
     const addButton = document.getElementById("addButton");
     const deleteButton = document.getElementById("deleteButton");
     const updateButton = document.getElementById("updateButton");
+    const subredditInput = document.getElementById("subredditInput")
 
     document.addEventListener("DOMContentLoaded", () => {
         addButton.addEventListener("click", async () => {
@@ -19,7 +20,18 @@ const addListeners = () => {
             } catch (err) {
                 console.log(err);
             }
+        });
+    });
 
+    document.addEventListener("DOMContentLoaded", () => {
+        subredditInput.addEventListener("keyup", async (event) => {
+            if (event.key === "Enter") {
+                try {
+                    await addSubreddit();
+                } catch (err) {
+                    console.log(err);
+                }
+            }
         });
     });
 
