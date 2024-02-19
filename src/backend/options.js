@@ -13,9 +13,9 @@ const addListeners = () => {
     const updateButton = document.getElementById("updateButton");
 
     document.addEventListener("DOMContentLoaded", () => {
-        addButton.addEventListener("click", async () => {
+        addButton.addEventListener("click", () => {
             try {
-                await addSubreddit();
+                addSubreddit();
             } catch (err) {
                 console.log(err);
             }
@@ -24,9 +24,9 @@ const addListeners = () => {
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-        deleteButton.addEventListener("click", async () => {
+        deleteButton.addEventListener("click", () => {
             try {
-                await deleteSubreddits();
+                deleteSubreddits();
             } catch (err) {
                 console.log(err);
             }
@@ -34,9 +34,9 @@ const addListeners = () => {
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-        updateButton.addEventListener("click", async () => {
+        updateButton.addEventListener("click", () => {
             try {
-                await updateSubreddits();
+                updateSubreddits();
             } catch (err) {
                 console.log(err);
             }
@@ -47,9 +47,9 @@ const addListeners = () => {
 /**
  * @description Parses the inputted subreddit and adds a subreddit to the table
  */
-const addSubreddit = async () => {
+const addSubreddit = () => {
     const name = document.getElementById("subredditInput").value;
-    await addSubredditFromInput(name);
+    addSubredditFromInput(name);
 }
 
 /**
@@ -57,9 +57,13 @@ const addSubreddit = async () => {
  * @description If a subreddit with the given name already exists, throws an error,
  *              otherwise adds a subreddit to storage with the given name and updates the table
  */
-const addSubredditFromInput = async (name) => {
-    chrome.storage.local.get(name, async (result) => {
+const addSubredditFromInput = (name) => {
+    chrome.storage.local.get(name, (result) => {
         if (!(name in result)) {
+
+            // adds subreddit
+            addSubredditToTable(name, null, null, null, null);
+
             const subredditOptions = {};
             subredditOptions[name] = {
                 filterCategory: "before",
@@ -67,10 +71,7 @@ const addSubredditFromInput = async (name) => {
                 isActive: false
             };
 
-            // adds subreddit
-            await chrome.storage.local.set(subredditOptions);
-
-            addSubredditToTable(name, null, null, null, null);
+            chrome.storage.local.set(subredditOptions, () => {});
         } else {
             console.log("Duplicate subreddit " + name + " was not added");
         }
@@ -110,7 +111,7 @@ const addName = (row, name) => {
     const element = document.createElement("input");
     element.setAttribute("type", "text");
     element.setAttribute("class", "subreddit" + namePrefix);
-    element.setAttribute("value", name);
+    element.setAttribute("name", name);
 
     element.required = true;
     element.value = name;
@@ -238,8 +239,7 @@ const addCell = (row) => {
 /**
  * @description Deletes all subreddits that are selected
  */
-const deleteSubreddits = async () => {
-
+const deleteSubreddits = () => {
     // iterate through table and get all selected subreddits as a map, deleting rows
     const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
     const selectedSubreddits = [];
@@ -260,13 +260,13 @@ const deleteSubreddits = async () => {
         }
     }
 
-    await chrome.storage.local.remove(selectedSubreddits);
+    chrome.storage.local.remove(selectedSubreddits, () => {});
 }
 
 /**
  * @description Updates subreddit table if no names are duplicated or empty, and if no datetimes are empty
  */
-const updateSubreddits = async () => {
+const updateSubreddits = () => {
     const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
 
     const checkedSubreddits = {};
@@ -289,16 +289,16 @@ const updateSubreddits = async () => {
     }
 
     if (shouldUpdate) {
-        await updateSubredditsFromInput();
+        updateSubredditsFromInput();
     } else {
-        console.log("Duplicate or invalid field inputted");
+        console.log("Duplicate or invalid field was inputted");
     }
 }
 
 /**
  * @description Updates storage with the subreddit table information
  */
-const updateSubredditsFromInput = async () => {
+const updateSubredditsFromInput = () => {
     const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
     const nameColumn = 0; // column index for subreddit name
     const filterCategoryColumn = 1; // column index for filter category
@@ -310,16 +310,19 @@ const updateSubredditsFromInput = async () => {
     for (let i = 0; i < subreddits.rows.length; i++) {
         let subreddit = subreddits.rows[i];
 
-        // gets name stored in attribute and dynamically updated name
-        let oldName = subreddit.children[nameColumn].getElementsByTagName("input")[0].getAttribute("value");
+        // gets old name stored in name attribute and dynamically updated new name
+        let oldName = subreddit.children[nameColumn].getElementsByTagName("input")[0].getAttribute("name");
         let newName = subreddit.children[nameColumn].getElementsByTagName("input")[0].value;
 
         let filterCategory = subreddit.children[filterCategoryColumn].getElementsByTagName("select")[0].value;
         let filterDateTime = subreddit.children[filterDateTimeColumn].getElementsByTagName("input")[0].value;
         let isActive = subreddit.children[isActiveColumn].getElementsByTagName("input")[0].checked;
 
+        // updates name attribute of subreddit to reflect updated name
+        subreddit.children[nameColumn].getElementsByTagName("input")[0].setAttribute("name", newName);
+
+        // appends old name only if name has been changed
         if (oldName !== newName) {
-            // appends old name only if name has been changed
             oldNames.push(oldName);
         }
 
@@ -330,20 +333,17 @@ const updateSubredditsFromInput = async () => {
             isActive: isActive
         };
 
-        await chrome.storage.local.set(subredditOptions);
-
-        // updates value attribute of subreddit to reflect updated name
-        subreddit.children[nameColumn].getElementsByTagName("input")[0].setAttribute("value", newName);
+        chrome.storage.local.set(subredditOptions, () => {});
     }
 
-    // remove at end to minimize # of database accesses
-    await chrome.storage.local.remove(oldNames);
+    // remove all outdated entries
+    chrome.storage.local.remove(oldNames, () => {});
 }
 
 /**
  * @description Retrieves subreddits from storage, clears table and displays them in table
  */
-const loadSubreddits = async () => {
+const loadSubreddits = () => {
     const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
     let i = 0;
 
@@ -388,6 +388,6 @@ const parseLocalDate = (utcDate) => {
     return date.toLocaleString('sv').slice(0, -3);
 }
 
-await loadSubreddits();
+loadSubreddits();
 addListeners();
 
