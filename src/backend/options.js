@@ -355,7 +355,7 @@ const updateSubredditsFromInput = () => {
 /**
  * @description Retrieves subreddits from storage, clears table and displays them in table
  */
-const loadSubreddits = async () => {
+const loadSubreddits = () => {
     const subreddits = document.getElementById("subreddits").getElementsByTagName("tbody")[0];
     let i = 0;
 
@@ -364,16 +364,17 @@ const loadSubreddits = async () => {
         i++;
     }
 
-    const result = await chrome.storage.local.get(null);
-    for (let key in result) {
+    chrome.storage.local.get(null, (result) => {
+        for (let key in result) {
 
-        let name = key;
-        let filterCategory = result[key].filterCategory;
-        let filterDateTime = result[key].filterDateTime;
-        let isActive = result[key].isActive;
+            let name = key;
+            let filterCategory = result[key].filterCategory;
+            let filterDateTime = result[key].filterDateTime;
+            let isActive = result[key].isActive;
 
-        addSubredditToTable(name, filterCategory, filterDateTime, isActive, null);
-    }
+            addSubredditToTable(name, filterCategory, filterDateTime, isActive, null);
+        }
+    });
 }
 
 /**
