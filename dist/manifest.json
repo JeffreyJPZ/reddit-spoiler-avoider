@@ -31,7 +31,6 @@
   "permissions": [
     "scripting",
     "tabs",
-    "storage",
-    "unlimitedStorage"
+    "storage"
   ]
 }
