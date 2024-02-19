@@ -1,13 +1,15 @@
 /**
- * Handles browser events e.g. user clicking on tab or scrolling and sends message to appropriate script
- * e.g. user clicks, background fires, gets popup data and sends to content script
+ * Handles browser events e.g. user clicking on popup button
+ * Caches subreddit filter options
  */
+
+// implement caching for subreddit filter options so that if user refreshes page (requestFilters key), then chrome storage does not need to be accessed (can pass cached subreddits to sendMessage)
 
 // Listens for messages from popup or content script
 chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     const parsedMessage = JSON.parse(message);
     if (parsedMessage.key === 'refreshFilters' || parsedMessage.key === 'requestFilters') {
-        getActiveSubreddits().then(sendResponse(''));
+        getActiveSubreddits().then(() => sendResponse(''));
     }
     return true;
 });
