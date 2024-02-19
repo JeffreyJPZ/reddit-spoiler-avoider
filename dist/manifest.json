@@ -29,7 +29,6 @@
     "service_worker": "./js/background.js"
   },
   "permissions": [
-    "scripting",
     "tabs",
     "storage"
   ]

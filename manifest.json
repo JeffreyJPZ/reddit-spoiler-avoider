@@ -23,5 +23,5 @@
   "background": {
     "service_worker": "./js/background.js"
   },
-  "permissions": ["scripting", "tabs", "storage"]
+  "permissions": ["tabs", "storage"]
 }
