@@ -259,7 +259,7 @@ const cacheSubreddits = (subredditFilterOptions) => {
 
 // Attempts to filter when page is first loaded and refresh filters has not been pressed yet
 try {
-    filterPosts();
+    chrome.runtime.sendMessage(JSON.stringify({key: 'requestFilters'})).then();
 } catch (err) {
     console.log(err);
 }
