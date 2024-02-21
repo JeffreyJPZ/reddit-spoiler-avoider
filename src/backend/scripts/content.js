@@ -12,7 +12,7 @@ const OLD_REDDIT_COMMENTS = "oldRedditComments" // flag indicating comment feed(
 const NEW_REDDIT_MAIN = "newRedditMain" // flag indicating main feed(s) for New Reddit
 const NEW_REDDIT_SUBREDDIT = "newRedditSubreddit" // flag indicating subreddit feed(s) for New Reddit
 const NEW_REDDIT_SEARCH = "newRedditSearch" // flag indicating search feed(s) for New Reddit // TODO: implement
-const NEW_REDDIT_COMMENTS = "newRedditComments" // flag indicating comment feed(s) for New Reddit // TODO: implement
+const NEW_REDDIT_COMMENTS = "newRedditComments" // flag indicating comment feed(s) for New Reddit
 
 // Receives data from background script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
