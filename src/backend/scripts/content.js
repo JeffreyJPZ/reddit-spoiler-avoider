@@ -11,7 +11,7 @@ const OLD_REDDIT_SEARCH = "oldRedditSearch" // flag indicating search feed(s) fo
 const OLD_REDDIT_COMMENTS = "oldRedditComments" // flag indicating comment feed(s) for Old Reddit // TODO: implement
 const NEW_REDDIT_MAIN = "newRedditMain" // flag indicating main feed(s) for New Reddit
 const NEW_REDDIT_SUBREDDIT = "newRedditSubreddit" // flag indicating subreddit feed(s) for New Reddit
-const NEW_REDDIT_SEARCH = "newRedditSearch" // flag indicating search feed(s) for New Reddit // TODO: implement
+const NEW_REDDIT_SEARCH = "newRedditSearch" // flag indicating search feed(s) for New Reddit
 const NEW_REDDIT_COMMENTS = "newRedditComments" // flag indicating comment feed(s) for New Reddit
 
 // Receives data from background script
@@ -66,6 +66,8 @@ const getFeedType = () => {
                 return NEW_REDDIT_SUBREDDIT;
             case "post_detail":
                 return NEW_REDDIT_COMMENTS;
+            case "search_results":
+                return NEW_REDDIT_SEARCH;
         }
     }
 }
@@ -77,14 +79,16 @@ const getFeedType = () => {
 const getParentContainer = (feedType) => {
 
     switch (feedType) {
-        case "oldReddit":
+        case OLD_REDDIT_MAIN:
             return document.getElementById(ELEMENTS_ID_OLD_REDDIT_MAIN);
-        case "newRedditMain":
+        case NEW_REDDIT_MAIN:
             return document.getElementById(ELEMENTS_ID_NEW_REDDIT_MAIN).getElementsByTagName('shreddit-feed')[0];
-        case "newRedditSubreddit":
+        case NEW_REDDIT_SUBREDDIT:
             return document.getElementById(ELEMENTS_ID_NEW_REDDIT_MAIN).children[2];
-        case "newRedditComments":
+        case NEW_REDDIT_COMMENTS:
             return document.getElementById(ELEMENTS_ID_NEW_REDDIT_COMMENTS);
+        case NEW_REDDIT_SEARCH:
+            return document.getElementsByTagName('reddit-feed')[0];
         default:
             return null;
     }
@@ -148,6 +152,8 @@ const isElementAPost = (element, feedType) => {
             return element.tagName === "ARTICLE";
         case NEW_REDDIT_COMMENTS:
             return element.tagName === "SHREDDIT-COMMENT";
+        case NEW_REDDIT_SEARCH:
+            return element.tagName === "FACEPLATE-TRACKER";
         default:
             return false;
     }
@@ -173,10 +179,8 @@ const doesPostMatchFilters = (element, subredditFilterOptions, feedType) => {
             break;
         case NEW_REDDIT_MAIN:
         case NEW_REDDIT_SUBREDDIT:
-            postSubredditName = getPostSubreddit(element, feedType);
-            postDateTime = getPostDateTime(element, feedType);
-            break;
         case NEW_REDDIT_COMMENTS:
+        case NEW_REDDIT_SEARCH:
             postSubredditName = getPostSubreddit(element, feedType);
             postDateTime = getPostDateTime(element, feedType);
             break;
@@ -216,6 +220,10 @@ const getPostSubreddit = (element, feedType) => {
             return document.getElementsByTagName('shreddit-post')[0]
                            .getAttribute('subreddit-prefixed-name')
                            .substring(2); // removes subreddit prefix
+        case NEW_REDDIT_SEARCH:
+            // object with post information
+            const postData = JSON.parse(element.getAttribute('data-faceplate-tracking-context'));
+            return postData['subreddit'].name;
         default:
             return "";
     }
@@ -235,6 +243,7 @@ const getPostDateTime = (element, feedType) => {
             return element.getElementsByTagName('shreddit-post')[0]
                 .getAttribute('created-timestamp');
         case NEW_REDDIT_COMMENTS:
+        case NEW_REDDIT_SEARCH:
             return element.getElementsByTagName('faceplate-timeago')[0]
                 .getAttribute('ts');
         default:
@@ -253,6 +262,7 @@ const hidePost = (post, feedType) => {
         case NEW_REDDIT_SUBREDDIT:
         case NEW_REDDIT_MAIN:
         case NEW_REDDIT_COMMENTS:
+        case NEW_REDDIT_SEARCH:
             post.style.opacity = 0; // allows post to still be clickable
             break;
         default:
@@ -271,6 +281,7 @@ const showPost = (post, feedType) => {
         case NEW_REDDIT_SUBREDDIT:
         case NEW_REDDIT_MAIN:
         case NEW_REDDIT_COMMENTS:
+        case NEW_REDDIT_SEARCH:
             post.style.opacity = 1; // allows post to still be clickable
             break;
         default:
@@ -289,28 +300,12 @@ const isPostHidden = (post, feedType) => {
         case NEW_REDDIT_SUBREDDIT:
         case NEW_REDDIT_MAIN:
         case NEW_REDDIT_COMMENTS:
+        case NEW_REDDIT_SEARCH:
             return post.style.opacity === 0;
         default:
             return false;
     }
 }
-
-// /**
-//  * @param post The post to remove
-//  * @param feedType The version of reddit and the particular page type, if applicable
-//  * @description Removes the post according to the given feed type
-//  */
-// const removePost = (post, feedType) => {
-//     switch (feedType) {
-//         case OLD_REDDIT_MAIN:
-//         case NEW_REDDIT_SUBREDDIT:
-//         case NEW_REDDIT_MAIN:
-//             post.style.display = "none";
-//             break;
-//         default:
-//             return;
-//     }
-// }
 
 /**
  * @param subredditFilterOptions The active subreddit filter options
@@ -328,7 +323,7 @@ const cacheSubreddits = (subredditFilterOptions) => {
 const tryFilterMutation = (node) => {
     const feedType = getFeedType();
     switch (feedType) {
-        case "oldRedditMain":
+        case OLD_REDDIT_MAIN:
             if (node.parentNode.id === ELEMENTS_ID_OLD_REDDIT_MAIN && node.tagName === "DIV") {
                 try {
                     filterPosts();
@@ -337,8 +332,7 @@ const tryFilterMutation = (node) => {
                 }
             }
             break;
-        case "newRedditMain":
-            // home page
+        case NEW_REDDIT_MAIN:
             if (node.parentNode.tagName === "SHREDDIT-FEED" && node.tagName === "FACEPLATE-BATCH") {
                 try {
                     filterPosts();
@@ -347,8 +341,7 @@ const tryFilterMutation = (node) => {
                 }
             }
             break;
-        case "newRedditSubreddit":
-            // subreddit page
+        case NEW_REDDIT_SUBREDDIT:
             if (node.parentNode.tagName === "DIV" && node.tagName === "FACEPLATE-BATCH") {
                 try {
                     filterPosts();
@@ -357,9 +350,17 @@ const tryFilterMutation = (node) => {
                 }
             }
             break;
-        case "newRedditComments":
-            // subreddit page
+        case NEW_REDDIT_COMMENTS:
             if (node.parentNode.id === NEW_REDDIT_COMMENTS) {
+                try {
+                    filterPosts();
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+            break;
+        case NEW_REDDIT_SEARCH:
+            if (node.parentNode.tagName === "REDDIT-FEED") {
                 try {
                     filterPosts();
                 } catch (err) {
@@ -382,12 +383,13 @@ const createObserver = () => {
     let app;
 
     switch (feedType) {
-        case "oldRedditMain":
+        case OLD_REDDIT_MAIN:
             app = document;
             break;
-        case "newRedditMain":
-        case "newRedditSubreddit":
-        case "newRedditComments":
+        case NEW_REDDIT_MAIN:
+        case NEW_REDDIT_SUBREDDIT:
+        case NEW_REDDIT_COMMENTS:
+        case NEW_REDDIT_SEARCH:
             // need to monitor posts being added and page type change
             app = document.getElementsByTagName('shreddit-app')[0];
             break;
