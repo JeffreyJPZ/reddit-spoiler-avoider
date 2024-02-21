@@ -4,9 +4,10 @@
 
 const ELEMENTS_ID_OLD_REDDIT = "siteTable"; // ID of container with all posts for Old Reddit
 const ELEMENTS_ID_NEW_REDDIT = "main-content"; // ID of container with all posts for New Reddit
-const OLD_REDDIT = "oldReddit" // flag indicating Old Reddit
-const NEW_REDDIT_SUBREDDIT = "newRedditSubreddit" // flag indicating subreddit page(s) for New Reddit
-const NEW_REDDIT_MAIN = "newRedditMain" // flag indicating main page(s) for New Reddit
+
+const OLD_REDDIT_MAIN = "oldRedditMain" // flag indicating Old Reddit
+const NEW_REDDIT_MAIN = "newRedditMain" // flag indicating main feed(s) for New Reddit
+const NEW_REDDIT_SUBREDDIT = "newRedditSubreddit" // flag indicating subreddit feed(s) for New Reddit
 
 // Receives data from background script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -25,34 +26,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
 });
 
-// Attempts to get updated filters and creates observer when page is first loaded
-try {
-    chrome.runtime.sendMessage(JSON.stringify({key: 'requestFilters'})).then(() => createObserver());
-} catch (err) {
-    console.log(err);
-}
-
 /**
  * @description gets the container with the posts and filters out posts matching the active subreddit filter options
  */
 const filterPosts = () => {
     const feedType = getFeedType();
-    let elements;
-
-    // if not using New Reddit, tries for Old Reddit
-    switch (feedType) {
-        case "oldReddit":
-            elements = document.getElementById(ELEMENTS_ID_OLD_REDDIT);
-            break;
-        case "newRedditMain":
-            elements = document.getElementById(ELEMENTS_ID_NEW_REDDIT).getElementsByTagName('shreddit-feed')[0];
-            break;
-        case "newRedditSubreddit":
-            elements = document.getElementById(ELEMENTS_ID_NEW_REDDIT).children[2];
-            break;
-        default:
-            elements = null;
-    }
+    const elements = getParentContainer(feedType);
 
     const subredditFilterOptions = JSON.parse(window.localStorage.getItem('subredditFilterOptions')) || null;
 
@@ -69,7 +48,7 @@ const getFeedType = () => {
     const elements = document.getElementById(ELEMENTS_ID_NEW_REDDIT); // assumes New Reddit
 
     if (elements === null) {
-        return OLD_REDDIT;
+        return OLD_REDDIT_MAIN;
     } else {
         const pageType = document.getElementsByTagName('shreddit-app')[0]
                                         .getAttribute('pagetype');
@@ -81,6 +60,24 @@ const getFeedType = () => {
             case "community":
                 return NEW_REDDIT_SUBREDDIT;
         }
+    }
+}
+
+/**
+ * @param feedType The version of reddit and the particular type of feed, if applicable
+ * @description gets the container with the posts and filters out posts matching the active subreddit filter options
+ */
+const getParentContainer = (feedType) => {
+
+    switch (feedType) {
+        case "oldReddit":
+            return document.getElementById(ELEMENTS_ID_OLD_REDDIT);
+        case "newRedditMain":
+            return document.getElementById(ELEMENTS_ID_NEW_REDDIT).getElementsByTagName('shreddit-feed')[0];
+        case "newRedditSubreddit":
+            return document.getElementById(ELEMENTS_ID_NEW_REDDIT).children[2];
+        default:
+            return null;
     }
 }
 
@@ -112,16 +109,16 @@ const tryFilter = (elements, subredditFilterOptions, feedType) => {
             && doesPostMatchFilters(element, subredditFilterOptions, feedType)) {
 
             hidePost(element, feedType);
-        } else if (isElementAPost(element, feedType)
-                    && !doesPostMatchFilters(element, subredditFilterOptions, feedType)) {
-            showPost(element, feedType);
         } else if (feedType === NEW_REDDIT_SUBREDDIT && element.tagName === "FACEPLATE-BATCH") {
             // handles New Reddit's infinite scroll on subreddit page
             // eventually terminates as number of children is finite
             tryFilter(element, subredditFilterOptions, feedType)  // element has multiple children
-        } else if (feedType === OLD_REDDIT && element.getAttribute("class") === "sitetable linklisting") {
+        } else if (feedType === OLD_REDDIT_MAIN && element.getAttribute("class") === "sitetable linklisting") {
             // handles Reddit Enhancement Suite's infinite scroll
             tryFilter(element, subredditFilterOptions, feedType);
+        } else if (isElementAPost(element, feedType) && !doesPostMatchFilters(element, subredditFilterOptions, feedType)) {
+            // needs to be at the very end
+            showPost(element, feedType);
         }
     }
 }
@@ -134,7 +131,7 @@ const tryFilter = (elements, subredditFilterOptions, feedType) => {
  */
 const isElementAPost = (element, feedType) => {
     switch (feedType) {
-        case OLD_REDDIT:
+        case OLD_REDDIT_MAIN:
             const postSubredditName = element.getAttribute("data-subreddit");
             return postSubredditName !== (null | "");
         case NEW_REDDIT_SUBREDDIT:
@@ -159,7 +156,7 @@ const doesPostMatchFilters = (element, subredditFilterOptions, feedType) => {
     let postDateTime;
 
     switch (feedType) {
-        case OLD_REDDIT:
+        case OLD_REDDIT_MAIN:
             postSubredditName = getPostSubreddit(element, feedType);
             postDateTime = parseFloat(getPostDateTime(element, feedType));
             break;
@@ -193,7 +190,7 @@ const doesPostMatchFilters = (element, subredditFilterOptions, feedType) => {
  */
 const getPostSubreddit = (element, feedType) => {
     switch (feedType) {
-        case OLD_REDDIT:
+        case OLD_REDDIT_MAIN:
             return element.getAttribute('data-subreddit');
         default:
             return element.getElementsByTagName('shreddit-post')[0]
@@ -209,7 +206,7 @@ const getPostSubreddit = (element, feedType) => {
  */
 const getPostDateTime = (element, feedType) => {
     switch (feedType) {
-        case OLD_REDDIT:
+        case OLD_REDDIT_MAIN:
             return element.getAttribute('data-timestamp');
         default:
             return element.getElementsByTagName('shreddit-post')[0]
@@ -224,7 +221,7 @@ const getPostDateTime = (element, feedType) => {
  */
 const hidePost = (post, feedType) => {
     switch (feedType) {
-        case OLD_REDDIT:
+        case OLD_REDDIT_MAIN:
         case NEW_REDDIT_SUBREDDIT:
         case NEW_REDDIT_MAIN:
             post.style.opacity = 0; // allows post to still be clickable
@@ -241,7 +238,7 @@ const hidePost = (post, feedType) => {
  */
 const showPost = (post, feedType) => {
     switch (feedType) {
-        case OLD_REDDIT:
+        case OLD_REDDIT_MAIN:
         case NEW_REDDIT_SUBREDDIT:
         case NEW_REDDIT_MAIN:
             post.style.opacity = 1; // allows post to still be clickable
@@ -258,7 +255,7 @@ const showPost = (post, feedType) => {
  */
 const isPostHidden = (post, feedType) => {
     switch (feedType) {
-        case OLD_REDDIT:
+        case OLD_REDDIT_MAIN:
         case NEW_REDDIT_SUBREDDIT:
         case NEW_REDDIT_MAIN:
             return post.style.opacity === 0;
@@ -274,7 +271,7 @@ const isPostHidden = (post, feedType) => {
 //  */
 // const removePost = (post, feedType) => {
 //     switch (feedType) {
-//         case OLD_REDDIT:
+//         case OLD_REDDIT_MAIN:
 //         case NEW_REDDIT_SUBREDDIT:
 //         case NEW_REDDIT_MAIN:
 //             post.style.display = "none";
@@ -300,7 +297,7 @@ const cacheSubreddits = (subredditFilterOptions) => {
 const tryFilterMutation = (node) => {
     const feedType = getFeedType();
     switch (feedType) {
-        case "oldReddit":
+        case "oldRedditMain":
             if (node.parentNode.id === ELEMENTS_ID_OLD_REDDIT && node.tagName === "DIV") {
                 try {
                     filterPosts();
@@ -336,7 +333,7 @@ const tryFilterMutation = (node) => {
 /**
  * @description Creates an observer to check if:
  *              user has navigated to a different feed using the sidebar or search tool (New Reddit)
- *              new posts have been added
+ *              OR new posts have been added
  */
 const createObserver = () => {
     const feedType = getFeedType();
@@ -344,28 +341,29 @@ const createObserver = () => {
     let app;
 
     switch (feedType) {
-        case "oldReddit":
+        case "oldRedditMain":
+            app = document.getElementById(ELEMENTS_ID_OLD_REDDIT);
+            break;
         case "newRedditMain":
         case "newRedditSubreddit":
-            app = document; // need to monitor posts being added and page type change
+            // need to monitor posts being added and page type change
+            app = document.getElementsByTagName('shreddit-app')[0];
             break;
         default:
             app = null;
     }
-
     const callback = (mutationList, observer) => {
         for (const mutation of mutationList) {
             switch (mutation.type) {
                 case "attributes":
                     if (mutation.attributeName === "pagetype") {
-                        try {
-                            filterPosts();
-                        } catch (err) {
-                            console.log(err);
-                        }
+                        // for New Reddit, attempts to get updated filters if navigating to new feed
+                        chrome.runtime.sendMessage(JSON.stringify({key: 'requestFilters'})).then();
                     }
                     break;
+                case "childList":
                 case "subtree":
+                    // need childList for New Reddit
                     for (let i = 0; i < mutation.addedNodes.length; i++) {
                         tryFilterMutation(mutation.addedNodes[i]);
                     }
@@ -377,4 +375,12 @@ const createObserver = () => {
 
     const observer = new MutationObserver(callback);
     observer.observe(app, config);
+}
+
+// Attempts to get updated filters and creates observer when page is first loaded
+try {
+    chrome.runtime.sendMessage(JSON.stringify({key: 'requestFilters'})).then();
+    createObserver();
+} catch (err) {
+    console.log(err);
 }
