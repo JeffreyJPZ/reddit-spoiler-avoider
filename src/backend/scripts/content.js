@@ -56,7 +56,7 @@ const getFeedType = () => {
         return OLD_REDDIT_MAIN;
     } else {
         const pageType = document.getElementsByTagName('shreddit-app')[0]
-                                        .getAttribute('pagetype');
+            .getAttribute('pagetype');
         switch (pageType) {
             case "home":
             case "popular":
@@ -214,16 +214,16 @@ const getPostSubreddit = (element, feedType) => {
         case NEW_REDDIT_MAIN:
         case NEW_REDDIT_SUBREDDIT:
             return element.getElementsByTagName('shreddit-post')[0]
-                          .getAttribute('subreddit-prefixed-name')
-                          .substring(2); // removes subreddit prefix
+                .getAttribute('subreddit-prefixed-name')
+                .substring(2); // removes subreddit prefix
         case NEW_REDDIT_COMMENTS:
             return document.getElementsByTagName('shreddit-post')[0]
-                           .getAttribute('subreddit-prefixed-name')
-                           .substring(2); // removes subreddit prefix
+                .getAttribute('subreddit-prefixed-name')
+                .substring(2); // removes subreddit prefix
         case NEW_REDDIT_SEARCH:
             // object with post information
             const postData = JSON.parse(element.getAttribute('data-faceplate-tracking-context'));
-            return postData['subreddit'].name;
+            return postData['post']['subreddit_name'];
         default:
             return "";
     }
