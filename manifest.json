@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Reddit Spoiler Avoider",
   "description": "Avoid spoilers and stay ignorant with this Reddit blocker. Filter out posts from subreddits before or after a given time and date.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icons": {
     "16": "./static/icon16.png",
     "32": "./static/icon32.png",
